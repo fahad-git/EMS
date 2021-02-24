@@ -1,0 +1,38 @@
+.main-lobby{
+    background: url("./../images/main-lobby.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    min-height: 100vh;
+}
+
+.webinar{
+    /* background: url("./../images/main-lobby.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    min-height: 100vh;
+}
+
+.help-desk{
+    /* background: url("./../images/main-lobby.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    min-height: 100vh;
+}

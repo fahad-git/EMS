@@ -1,0 +1,67 @@
+@font-face {
+    font-family: AstroArmadaExpanded;
+    src: url("../font/AstroArmada-RpXBl.woff");
+}
+
+
+.item-color:active{
+    background: radial-gradient(at center center, rgba(238, 51, 51, 0.1) 0%, rgba(37, 5, 5, 0.5) 100%),  url("./../images/backgroundImg2.jpg");
+} 
+
+.services{
+    /* background: radial-gradient(at center center, rgba(238, 51, 51, 0.1) 0%, rgba(37, 5, 5, 0.5) 100%),  url("./../images/backgroundImg2.jpg"); */
+    background: radial-gradient(at center center, rgba(194, 179, 179, 0.1) 0%, rgba(248, 248, 248, 0.5) 100%),  url("./../images/backgroundImg2.jpg");    
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.services h1{
+    font-size: calc(18px + 5vmin);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: normal;
+    letter-spacing: 2px;
+}
+
+.services h2{
+    font-size: calc(10px + 2vmin);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: lighter;
+    letter-spacing: 4px;
+}
+
+.services p{
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+    letter-spacing: 3px;
+    font-size: calc(6px + 2vmin);
+    margin-top: 10px;
+    margin-bottom: 50px;
+    font-family:"Lucida Handwriting";
+}
+.services .divider {
+    margin-bottom: 2rem;
+    margin-top: 0 !important;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+.sidebar{
+    /* background: radial-gradient(at center center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%),  url("./../images/backgroundImg2.jpg"); */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
+    background-repeat: no-repeat;
+    background-size: contain;  
+}
+
+.sidebar-item{
+    color:rgba(255, 255, 255, 1);
+}
+.sidebar-item:hover{
+    color:rgba(255, 255, 255, 0.6);
+}

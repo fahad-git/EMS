@@ -1,0 +1,147 @@
+@font-face {
+    font-family: AstroArmadaExpanded;
+    src: url("../font/AstroArmada-RpXBl.woff");
+}
+
+.home{
+    /* background: radial-gradient(at center center, rgba(238, 51, 51, 0.1) 0%, rgba(37, 5, 5, 0.5) 100%),  url("./../images/backgroundImg2.jpg"); */
+    background: radial-gradient(at center center, rgba(194, 179, 179, 0.1) 0%, rgba(248, 248, 248, 0.5) 100%),  url("./../images/backgroundImg2.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.home-footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.home-footer-content{
+    color: white;
+    text-align: center;
+    letter-spacing: 2px;
+    font-size: calc(6px + 2vmin);
+
+    margin-bottom: 20vh;
+}
+
+.home > h1{ 
+    font-family: AstroArmadaExpanded;
+    color:rgb(0, 0, 0);
+
+    animation-timing-function: linear;
+    animation: mymove 3s 1;
+}
+
+.home > p{
+    color: rgb(0, 0, 0);
+    text-align: center;
+    letter-spacing: 2px;
+    font-size: calc(6px + 2vmin);
+    font-family:AstroArmadaExpanded;
+}
+
+.home .demo{
+    background: rgba(0, 0, 0, 0.4);
+    bottom: 30vh;
+}
+
+.home .demo:hover{
+    background: white;
+    border-color: black;
+}
+
+
+.home .register{
+    outline-color: black;
+    border-color: black;
+    bottom: 30vh;
+}
+
+.home .register:hover{
+    background: rgba(0, 0, 0, 0.3);
+    color:white;
+    border-color: white;
+}
+
+
+@media screen and (max-width: 330px){
+    .home .demo{
+        font-size: 15px;
+    }
+    .home .register{
+        font-size: 15px;
+    }
+    .home p{
+        font-size: 10px !important;
+    }
+}
+@media screen and (max-width: 800px){
+    .text-3d {
+        font-size: 30px !important;
+     
+    }
+    .home p{
+        font-size: 10px !important;
+    }
+}
+
+@keyframes mymove {
+    from {top: 40%;}
+    to {top: 55%;}
+  }
+
+.text-3d {
+    text-transform: uppercase;
+    color:rgb(0, 0, 0);
+    font-size: 36px;
+    position: absolute;
+    top:55%;
+    left:50%;
+    transform: translate(-50% ,-50%);
+    text-shadow:
+                    0 1px 0 rgb(45,45,45),
+                    0 2px 0 rgb(50,50,50),
+                    /* 0 3px 0 rgb(60,60,60),
+                    0 4px 0 rgb(70,70,70), */
+                    /* 0 5px 0 rgb(170,170,170),
+                    0 6px 0 rgb(165,165,165),
+                    0 7px 0 rgb(160,160,160), */
+                    0 1px 5px rgba(255,255,255,.05),
+                    0 3px 5px rgba(255,255,255,.10),
+                    0 5px 10px rgba(255,255,255,.15),
+                    0 7px 10px rgba(255,255,255,.20),
+                    0 10px 15px rgba(255,255,255,.25); 
+    transition: all 0.2s ease-in-out;        
+    cursor: pointer;
+}
+.text-3d:hover {
+    text-shadow:
+                    0 1px 0 rgb(190,190,190),
+                    0 2px 0 rgb(185,185,185),
+                    0 3px 0 rgb(180,180,180),
+                    0 4px 0 rgb(175,175,175),
+                    0 5px 0 rgb(170,170,170),
+                    0 6px 0 rgb(165,165,165),
+                    0 7px 0 rgb(160,160,160),
+                    0 8px 0 rgb(155,155,155),
+                    0 9px 0 rgb(150,150,150),
+
+                    0 1px 5px rgba(0,0,0,.05),
+                    0 5px 5px rgba(0,0,0,.10),
+                    0 10px 10px rgba(0,0,0,.15),
+                    0 15px 10px rgba(0,0,0,.20),
+                    0 20px 15px rgba(0,0,0,.25);
+    transform: translate(-51%,-51%);
+    transition: all 0.2s ease-in-out;
+}
+
