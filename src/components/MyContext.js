@@ -38,24 +38,26 @@ export function MyProvider({ children }){
     //     console.log(isBaseHeader)
     //   }, [toggleHeader]);
     
-    function setUser(value) {
-        localStorage.setItem("user", user);
-        setUserHandler(value);
+    function setUser(user) {
+
+        localStorage.setItem("user", JSON.stringify(user) );
+        setUserHandler(user);
     }
 
     function toggleModelOpen(value){
-        localStorage.setItem("modalOpen", value);
         toggleModelOpenHandler(value);
+        localStorage.setItem("modalOpen", value);
     }
 
     function toggleHeader(value){
+
+        toggleHeaderHandler(value);
         localStorage.setItem("isBaseHeader", value);
         // toggleHeaderHandler(prevIsBaseHeader => !prevIsBaseHeader);
-        toggleHeaderHandler(value);
     }
 
     return(
-        <UserContext.Provider value={[localStorage.getItem("user"), setUser]}>
+        <UserContext.Provider value={[JSON.parse(localStorage.getItem("user")), setUser]}>
             <ModalContext.Provider value={[localStorage.getItem("modalOpen") == String(true), toggleModelOpen]}>
                 <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") == String(true), toggleHeader]}>
                     { children }

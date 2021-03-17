@@ -33,6 +33,8 @@ return  <Navbar collapseOnSelect expand="md" bg="transparent" variant="dark" sti
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ml-auto">
               <Nav.Link  href="/home">Home</Nav.Link>
+              <Nav.Link className="ml-4" href="#events">Events</Nav.Link>
+
               <NavDropdown className="ml-4" title="Services" id="collasible-nav-dropdown">
                 <NavDropdown.Item href="/services" className="item-color">Services</NavDropdown.Item>
                 <NavDropdown.Item href="/services#action1" className="item-color">Another action</NavDropdown.Item>
@@ -41,7 +43,6 @@ return  <Navbar collapseOnSelect expand="md" bg="transparent" variant="dark" sti
                 <NavDropdown.Item href="/services#action3" className="item-color">Separated link</NavDropdown.Item>
               </NavDropdown>
 
-              {/* <Nav.Link className="ml-4" href="#pricing">Services</Nav.Link> */}
               <Nav.Link className="ml-4" href="/aboutUs">About Us</Nav.Link>
               <Nav.Link className="ml-4" href="/contactUs">Contact Us</Nav.Link>
               <Nav.Link className="mx-4" href="#login" onClick={loginHandler}>Login</Nav.Link>

@@ -20,6 +20,7 @@ function App() {
       <div className="App">
         <MyProvider>
           <Main/>
+          <NavbarFooter/>
         </MyProvider>
       </div>
     </Router>

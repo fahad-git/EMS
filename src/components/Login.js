@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {Form, Container, Row, Button, Col} from 'react-bootstrap';
 import { useForm } from "react-hook-form";
 
+import { Authenticate } from './API/Auth';
+ 
 // CSS import goes here
 import './../assets/css/BaseComponents.css';
 
@@ -15,47 +17,75 @@ function Login(){
     const [user, setUser] = useUserContext();
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [isBaseHeader, toggleHeader] = useHeaderContext();
+    const [error, setError] = useState({
+        display:"none",
+        msg:""
+    })
 
     const { register, errors, watch, handleSubmit } = useForm();
     
     const onSubmit = data => {
-        console.log(data);
-        if(data.email === "jaimer" && data.password === "123"){
-            setUser({
-                "name":"Fahad",
-                "islogin":"true"
-            })
+        Authenticate(data)
+        .then((res) => {
+            if(res.data.success)
+            {
+            const usr = res.data.user;
+            setUser(usr);
             toggleHeader(false);
             toggleModelOpen(false);
-            history.push("/dashboard");
-        }
+            if(usr.role === "admin")
+                history.push("/dashboard");
+            else
+                history.push("/user-dashboard");
+
+            }else{
+                setError({
+                    display:"block",
+                    msg:res.statusText
+                })
+            }
+        }).catch((err) => {
+            console.log(err);
+            setError({
+                display:"block",
+                msg:err.message
+            })
+        })
+
     }
 
-    const styles = [
-        {
-            width:"100%",
+    const styles = {
+        errors: {
+            color:"red",
+            display: error.display
         }
-    ]
+    }
 
 
     return  <div>
                     <Container>
                         <Form onSubmit={handleSubmit(onSubmit)}>
-                            <Form.Group as={Row} controlId="formBasicEmail">
+                            <Form.Group as={Row} controlId="formBasicUsername">
                                 {/* <Form.Label>Password</Form.Label> */}
                                 <Col sm={{span:8, offset:2}}>
-                                    <Form.Control name="email" type="text" placeholder="Username or Email" ref={register} />
+                                    <Form.Control onFocus={()=> setError({display:"none",msg:null})} name="username" type="text" placeholder="Username or Email" ref={register} required/>
                                 </Col>
                             </Form.Group>
 
                             <Form.Group as={Row} controlId="formBasicPassword">
                                 {/* <Form.Label>Address</Form.Label> */}
                                 <Col sm={{span:8, offset:2}}>
-                                    <Form.Control name="password" type="password" placeholder="Password" ref={register}/>
+                                    <Form.Control onFocus={()=> setError({display:"none",msg:null})} name="password" type="password" placeholder="Password" ref={register} required/>
                                     <i className="ion-eye-outline" id="togglePassword"></i>
                                     <Form.Label><a href="/forget-password">Forget Password?</a></Form.Label>
                                 </Col>
+       
+                                <Col style={styles.errors} sm={{span:8, offset:2}}>
+                                        {error.msg /* Invalid username or password! */}
+                                </Col>
+        
                             </Form.Group>
+                            
                                 <Row>
                                     <Col sm={{span:8, offset:2}}>
                                         <Button size="lg" variant="dark" type="submit" block>

@@ -1,30 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import SearchField from "react-search-field";
 import '../assets/css/Dashboard.css';
 
 import { useModalContext } from './MyContext';
 import CreateEvent from './CreateEvent';
-import DynamicModal from './DynamicModal';
-
 import { useHistory } from 'react-router-dom';
 
-const tmp = [{
-    "name":"Health Awareness",
-    "date":"10-1-2021",
-    "host":"Ali",
-    "details":"This time of events is 4pm"
-},{
-    "name":"Catwalk Show",
-    "date":"10-1-2021",
-    "host":"James",
-    "details":"This time of events is 4pm"
-},{
-    "name":"Games Theory",
-    "date":"10-1-2021",
-    "host":"Aqib",
-    "details":"This time of events is 4pm"
-}]
+// API Callings
+import { UpcomingEventsData } from './API/userAPIs';
 
 const styles = {
     container:{
@@ -38,16 +22,24 @@ const styles = {
         marginTop:20
     },
     heading:{
-        fontSize:"calc(5px + 3vmin)"
+        fontSize:"calc(5px + 3vmin)",
+        textAlign:"left"
     },
     circles:{
         marginBottom: 30
     },
     record:{
-        fontSize:"calc(3px + 2vmin)"
+        fontSize:"calc(3px + 2vmin)",
+        textAlign:"left"
     },
     searchField:{
         borderRadius: "50%"
+    },
+    eventSelection:{
+        cursor:"pointer"
+    },
+    btn:{
+        width:"100px"
     }
 }
 
@@ -57,8 +49,7 @@ function Events(){
 
     const [modalOpen, toggleModelOpen] = useModalContext();
 
-    const [events, setEvents] = useState(tmp);
-    const [content, setContent] = useState();
+    const [events, setEvents] = useState([]);
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -66,44 +57,79 @@ function Events(){
         console.log(searchQuery);
     }
 
-    const createEventHandler = () => {
-        let cont = {
-            header:"Create Event",
-            component:<CreateEvent/>,
-            footer:""
-          }
-        setContent(cont);
-        toggleModelOpen(true);
+    const detailsHandler = () => {
+       
     }
 
+    const selectedEventHandler = (name) => {
+        console.log(name)
+    }
   
-    return  <>
-            {modalOpen?  <DynamicModal content={content} />: ''}
+    useEffect(() => {
+        UpcomingEventsData()
+        .then(res => {
+            setEvents(res.data)
+        }).catch(err => {
+            console.log(err)
+        })
+    },[])
 
+
+    return  <>
             <div className="dashboard">
                 <Container>
                     <Row>
-                        <Col sm="5"></Col>
-                        <Col sm="4">
+                        <Col>
                             <SearchField
                                 placeholder="Search..."
                                 onChange={value => setSearchQuery(value)}
                                 searchText=""
-                                className="float-right"
                                 style={styles.searchField}
                                 onEnter={searchHandler}
                                 onSearchClick = {searchHandler}
                                 />
-                        </Col>
-                        <Col sm="3">
-                            <Button onClick={createEventHandler} className="float-right" variant="secondary">Create Event</Button>
                         </Col>
                     </Row>
                 </Container>
 
                 <Container>
                     <Row style={styles.container}>
-                        <Col style={styles.title}>Events</Col>
+                        <Col style={styles.title}>Upcoming Events</Col>
+                    </Row> 
+                    <hr className="divider"/>   
+                    {/* Here wil go dynamic UI */}
+                    {events.map( ({name, date, host, details}, index) => {
+                        return <Row key={"events-"+index} style={styles.container}>
+                                    <Col sm={12} md={10} onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                        <Row>
+                                        <Col sm={4} style={styles.heading}>{name} </Col>
+                                        <Col sm={6} style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                        </Row>
+                                        <Row>
+                                        <Col sm={4} style={styles.record}>Organizier: {host} </Col>
+                                        <Col sm={6} style={styles.record}>Details: {details} </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col sm={12} md={2}>
+                                        <Row>
+                                            <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={detailsHandler} style={styles.btn} variant="secondary">Details</Button></Col>                                    
+                                            <Col sm={6} md={12} style={styles.record}><Button style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
+                                        </Row>
+                                    </Col>
+                                    <hr className="divider"/>
+                                </Row> 
+                    })}
+                </Container>
+            </div>
+            </>
+
+}
+export default Events;
+
+{/*
+                <Container>
+                    <Row style={styles.container}>
+                        <Col style={styles.title}>Upcoming Events</Col>
                     </Row> 
                     <hr className="divider"/>   
                     <Row style={styles.container} className="justify-content-center" >
@@ -114,7 +140,7 @@ function Events(){
                     </Row>
                     <hr className="divider"/>   
 
-                    {/* Here wil go dynamic UI */}
+                    
                     {events.map( ({name, date, host, details}, index) => {
                         return <Row key={index} style={styles.container}>
                                     <Col style={styles.record}>{name} </Col>
@@ -126,8 +152,4 @@ function Events(){
                     <hr className="divider"/>
 
                 </Container>
-            </div>
-            </>
-
-}
-export default Events;
+*/}

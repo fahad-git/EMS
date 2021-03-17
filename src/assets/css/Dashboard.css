@@ -2,8 +2,8 @@
     margin:0;
     padding: 0;
     box-sizing: border-box;
-    overflow-y: scroll;
-    height: 100vh;
+    overflow-y: visible;
+    min-height: 100vh;
 }
 
 .dashboard .container{
@@ -24,6 +24,11 @@
      width: 10vw;
     height: 21vh; */
 }
+.dashboard .circular-progress:active{
+    background-color: rgb(25, 27, 34) !important;
+    outline: none !important;
+    border:none !important;
+}
 .dashboard .circular-progress h3{
     position:absolute;
     top:50%; left:50%;
@@ -43,3 +48,14 @@
         font-size: calc(5px + 2vmin);
     }
 }
+
+.dashboard::-webkit-scrollbar {
+    display: none;
+  }
+  /* body::-webkit-scrollbar {
+        display: none;
+  } */
+
+  .dashboard .react-search-field {
+      float:right !important;
+  }

@@ -1,5 +1,5 @@
 import React from 'react';
-import {CardGroup} from 'react-bootstrap';
+import {CardGroup, Row} from 'react-bootstrap';
 
 // CSS imports
 
@@ -16,12 +16,15 @@ function NavbarFooter(){
 
     const [user, setUser] = useUserContext();
 
-    return  <div className="App-footer">
+    return  <>
+    <Row style={{minHeight:"10vh"}}></Row>
+    <div className="App-footer">
                 <CardGroup >
                 {footerContent.map((content,index) => {
                     return <FooterTile key={index} content={content} />
                 })} 
                 </CardGroup>
             </div>
+            </>
 }
 export default NavbarFooter;

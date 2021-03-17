@@ -15,7 +15,8 @@ function CreateEvent(){
     var today = new Date();
     var date = String(today.getFullYear() + "-" + (today.getMonth()+1) + "-" + today.getDate());
 
-    var [selectedDate, setSelectedDate] = useState(date);
+    var [selectedStartDate, setSelectedStartDate] = useState(date);
+    var [selectedEndDate, setSelectedEndDate] = useState(date);
 
     const { register, errors, watch, handleSubmit } = useForm();
     
@@ -32,8 +33,14 @@ function CreateEvent(){
         }
     ]
 
-    const selectDateHandler = (date) => {
+    const selectStartDateHandler = (date) => {
         console.log(date)
+        setSelectedStartDate(date);
+    }
+
+    const selectEndDateHandler = (date) => {
+        console.log(date)
+        setSelectedEndDate(date);
     }
 
     return  <>
@@ -53,16 +60,26 @@ function CreateEvent(){
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} controlId="formBasicEventDate">
+                        <Form.Group as={Row} controlId="formBasicEventStartDate">
                             <Col sm={{span:8, offset:2}}>
                             <DatePickerInput className="col-12 date-picker"
-                                             onChange={selectDateHandler}
-                                             value={selectedDate}
+                                             onChange={selectStartDateHandler}
                                              className='my-custom-datepicker-component'
+                                             placeholder="Start Date"
                                              />
                             </Col>
                         </Form.Group>
 
+
+                        <Form.Group as={Row} controlId="formBasicEventEndDate">
+                            <Col sm={{span:8, offset:2}}>
+                            <DatePickerInput className="col-12 date-picker"
+                                             onChange={selectEndDateHandler}
+                                             className='my-custom-datepicker-component'
+                                             placeholder="End Date"
+                                             />
+                            </Col>
+                        </Form.Group>
                         <Form.Group as={Row} controlId="formBasicEventDescription">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
@@ -73,7 +90,7 @@ function CreateEvent(){
                         <Row>
                             <Col sm={{span:8, offset:2}}>
                                 <Button size="lg" variant="dark" type="submit" block>
-                                    Create Event
+                                    Submit Proposal
                                 </Button>
                             </Col>
                         </Row>

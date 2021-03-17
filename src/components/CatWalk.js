@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { Row, Col, Image, Container } from 'react-bootstrap';
 import TextEllipsis from 'react-text-ellipsis';
-import VideoThumbnail from 'react-video-thumbnail';
 
 const videos = [
     {

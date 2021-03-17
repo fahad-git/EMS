@@ -11,20 +11,17 @@ import VideoDemoTile from './VideoDemoTile';
 import ImageDemoTile from './ImageDemoTile';
 import NavbarFooter from "../HeadersAndFooters/NavbarFooter"
 import {imgs, vids} from '../../assets/content/SliderContent';
+import Events from './../Events';
 
 function Home(){
 
     const history = useHistory();
-    console.log(imgs)
 
     const onLeave = (origin, destination, direction) => {
-        console.log("Leaving section " + origin.index);
+        console.log()
       }
     const afterLoad = (origin, destination, direction) => {
-        console.log("After load: " + destination.index);
-        console.log(origin);
-        console.log("After load: " + direction);
-
+        console.log()
       }
 
     const watchDemoHandler = () => {
@@ -50,7 +47,7 @@ function Home(){
         loopBottom= {true}
         licenseKey = {''}
         sectionsColor={[]}
-        anchors = {["First", "Second", "watchDemo", "Fourth"]}
+        anchors = {["First", "Second", "events", "watchDemo", "Fourth"]}
         onLeave={onLeave}
         afterLoad={afterLoad}
         render={({ state, fullpageApi }) => {
@@ -73,6 +70,9 @@ function Home(){
                     {imgs.map((img, index) => (
                         <ImageDemoTile key = {index} img={img}/>
                     ))}
+                </div>
+                <div className="section">
+                   <Events />
                 </div>
                 <div className="section">
                     {vids.map((vid, index) => (

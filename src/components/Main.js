@@ -1,5 +1,5 @@
-import React  from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import React, { useEffect }  from 'react';
+import {Switch, Route, Redirect, useHistory} from 'react-router-dom';
 import Home from './BasicStructure/Home';
 import Services from './BasicStructure/Services';
 import AboutUs from './BasicStructure/AboutUs';
@@ -7,6 +7,7 @@ import ContactUs from './BasicStructure/ContactUs';
 import Register from './Register';
 import ForgetPassword from './ForgetPassword';
 import Dashboard from './Dashboard';
+import DashboardUser from './DashboardUser';
 import UserManagement from './UserManagement';
 import Events from './Events';
 import MainLobby from './MainLobby';
@@ -19,18 +20,28 @@ import Setting from './Setting';
 import NavbarHeader from '../components/HeadersAndFooters/NavbarHeader';
 import DashboardHeader from '../components/HeadersAndFooters/DashboardHeader';
 
-import { useHeaderContext } from './MyContext';
+import { useHeaderContext, useUserContext } from './MyContext';
 import NavbarFooter from './HeadersAndFooters/NavbarFooter';
 
 import AddUser from './AddUser';
+import OrganizeEvents from './OrganizingEvent';
 
 function Main(){
 
     const [isBaseHeader, toggleHeader] = useHeaderContext();
     // const isBaseHeader = localStorage.getItem("isBaseHeader");
-    console.log("My Value")
-    console.log(typeof(isBaseHeader))
     
+    const history = useHistory();
+    const [user, setUser] = useUserContext();
+
+    useEffect(()=>{
+        const paths = ["/home", "/services", "/aboutUs", "/contactUs"]
+        if(!user &&  !paths.includes(window.location.pathname)){
+            toggleHeader(true);
+            history.push('/');
+        }
+    },[]);
+
     return <> 
             {isBaseHeader ? <NavbarHeader/> : <DashboardHeader/> }
 
@@ -51,11 +62,11 @@ function Main(){
                     <Route path='/webinar'> <Webinar /> </Route>
                     <Route path='/help-desk'> <HelpDesk /> </Route>
                     <Route path='/settings'> <Setting /> </Route>
+                    <Route path='/user-dashboard'><DashboardUser /></Route>
+                    <Route path='/organize-events'><OrganizeEvents /></Route>
                     
                     <Redirect to="/home" />
                 </Switch>
-
-                <NavbarFooter/>
             </>
 }
 export default Main;
