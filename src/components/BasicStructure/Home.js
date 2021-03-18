@@ -18,7 +18,7 @@ function Home(){
     const history = useHistory();
 
     const onLeave = (origin, destination, direction) => {
-        console.log()
+        history.push("/home#" + destination.anchor);
       }
     const afterLoad = (origin, destination, direction) => {
         console.log()
@@ -47,7 +47,7 @@ function Home(){
         loopBottom= {true}
         licenseKey = {''}
         sectionsColor={[]}
-        anchors = {["First", "Second", "events", "watchDemo", "Fourth"]}
+        anchors = {["", "gallery", "events", "watchDemo", "support"]}
         onLeave={onLeave}
         afterLoad={afterLoad}
         render={({ state, fullpageApi }) => {
@@ -57,7 +57,6 @@ function Home(){
                     <div className="home">
                         <h1 className="text-3d">Event Management System</h1>
                         {/* <p>Organize your events online with us!</p> */}
-                    
                         <ButtonGroup>
                             <Button onClick={watchDemoHandler} className="mr-3 demo" variant="outline-light" size="lg">Watch Demo</Button>
                             <Button onClick={registerHandler} className="ml-3 register" variant="light" size="lg">Register Now</Button>

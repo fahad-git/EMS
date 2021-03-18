@@ -26,6 +26,8 @@ import NavbarFooter from './HeadersAndFooters/NavbarFooter';
 import AddUser from './AddUser';
 import OrganizeEvents from './OrganizingEvent';
 
+// import { RefreshToken } from './components/API/Auth';
+
 function Main(){
 
     const [isBaseHeader, toggleHeader] = useHeaderContext();
@@ -33,6 +35,28 @@ function Main(){
     
     const history = useHistory();
     const [user, setUser] = useUserContext();
+
+    // useEffect(() => {
+  
+    //   if(user){
+    //     setInterval(  
+    //       () => {
+    //           console.log(user.tokenExpiry)
+    //         let expiry = new Date(user.tokenExpiry);
+    //         let current = new Date();
+    //         current.setSeconds(current.getSeconds())
+    //         console.log(expiry , " : " , current);  
+    //         if(current > expiry){
+    //             console.log("Refresh Token");
+    //         }
+    //         else{
+    //             console.log("Same")
+    //         }
+    //       },  
+    //       1000  
+    //     );  
+    //   }
+    // }, []) 
 
     useEffect(()=>{
         const paths = ["/home", "/services", "/aboutUs", "/contactUs"]

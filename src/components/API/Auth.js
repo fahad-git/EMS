@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Base_URL from './Config';
+import {Base_URL} from './Config';
 
 
 export function Authenticate (credentials){
@@ -14,6 +14,17 @@ export function Authenticate (credentials){
     // console.log(header);
     return axios.post(Base_URL + '/users/login', credentials)
 }
+
+export function RefreshToken (){
+    const user = JSON.parse(localStorage.getItem("user"));
+    var token = ""
+    if(user)
+        token = user.token;
+    const AuthorizationHeader = { "Authorization": "Bearer " + token }
+     
+    return axios.get(Base_URL + '/users/token',  { headers:AuthorizationHeader } )
+}
+
 
 export function Logout (){
     const user = JSON.parse(localStorage.getItem("user"));

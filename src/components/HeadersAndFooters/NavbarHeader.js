@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import logo from './../../assets/images/logo.png';
 import {Nav, Navbar, NavDropdown} from 'react-bootstrap';
 
@@ -13,11 +14,14 @@ import { useModalContext } from '../MyContext';
 
 function NavbarHeader(){
 
+  const history = useHistory();
+
   const [content, setContent] = useState();
 
   const [modalOpen, toggleModelOpen] = useModalContext();
 
   const loginHandler = () => {
+  
     let cont = {
       header:"Login",
       component:<Login/>,
@@ -32,8 +36,9 @@ return  <Navbar collapseOnSelect expand="md" bg="transparent" variant="dark" sti
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ml-auto">
+
               <Nav.Link  href="/home">Home</Nav.Link>
-              <Nav.Link className="ml-4" href="#events">Events</Nav.Link>
+              <Nav.Link className="ml-4" href="/home#events" onClick={() => { history.push('/events')} }>Events</Nav.Link>
 
               <NavDropdown className="ml-4" title="Services" id="collasible-nav-dropdown">
                 <NavDropdown.Item href="/services" className="item-color">Services</NavDropdown.Item>

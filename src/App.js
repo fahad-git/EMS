@@ -13,8 +13,6 @@ import { MyProvider } from './components/MyContext';
 
 function App() {
 
-  
-
   return (
     <Router>
       <div className="App">

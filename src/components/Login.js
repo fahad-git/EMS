@@ -30,6 +30,10 @@ function Login(){
             if(res.data.success)
             {
             const usr = res.data.user;
+            var d = new Date();
+            d.setSeconds(d.getSeconds() + usr.tokenExpiry);
+            usr.tokenExpiry = d;
+            usr.isLogin = false;
             setUser(usr);
             toggleHeader(false);
             toggleModelOpen(false);

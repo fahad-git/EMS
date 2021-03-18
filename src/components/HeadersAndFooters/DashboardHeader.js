@@ -25,12 +25,12 @@ function DashboardHeader(){
   const [user, setUser] = useUserContext();
 
   const logoutHandler = () => {
-    console.log("Logout")
+      console.log("Logout")
       localStorage.clear();
       toggleHeader(true);
       window.location.reload();
       history.push("/");
-    // Logout()
+      // Logout()
     // .then(res => {
     //   localStorage.clear();
     //   toggleHeader(true);
@@ -47,7 +47,6 @@ function DashboardHeader(){
 
 
   const renderHeaderOptions = () => {
-    console.log(user)
     if(user && user.role == "admin"){
       return [
         <Nav.Link className="ml-4" key="link-1" href="/main-lobby">Main Lobby</Nav.Link>,

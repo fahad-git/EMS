@@ -1,6 +1,11 @@
 .App {
   text-align: center;
 }
+
+body {
+  overflow-y: scroll; /* Show vertical scrollbar */
+  overflow-x: hidden !important; /* Show horizontal scrollbar */
+}
 /* 
 .App-header {
   background-color: #282c34;

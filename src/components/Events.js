@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
 import SearchField from "react-search-field";
 import '../assets/css/Dashboard.css';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { useModalContext } from './MyContext';
+import { useModalContext, useUserContext } from './MyContext';
 import CreateEvent from './CreateEvent';
 import { useHistory } from 'react-router-dom';
 
 // API Callings
 import { UpcomingEventsData } from './API/userAPIs';
+import DynamicModal from './DynamicModal';
 
 const styles = {
     container:{
@@ -48,6 +51,8 @@ function Events(){
     const history = useHistory();
 
     const [modalOpen, toggleModelOpen] = useModalContext();
+    const [user, setUser] = useUserContext();
+    const [content, setContent] = useState();
 
     const [events, setEvents] = useState([]);
 
@@ -58,7 +63,36 @@ function Events(){
     }
 
     const detailsHandler = () => {
-       
+        if(!user){
+            toast("You must login first", {
+                type:"info",
+                });
+        }else {
+            let cont = {
+                header:"Organize Event",
+                component:<CreateEvent/>,
+                footer:""
+            }
+            setContent(cont);
+            toggleModelOpen(true);
+        }
+    }
+
+    const buyTicketHandler = () => {
+        if(!user){
+            toast("You must login first", {
+
+                type:"info",
+                });
+        }else {
+            let cont = {
+                header:"Buy Ticket",
+                component:<CreateEvent/>,
+                footer:""
+            }
+            setContent(cont);
+            toggleModelOpen(true);
+        }
     }
 
     const selectedEventHandler = (name) => {
@@ -74,8 +108,27 @@ function Events(){
         })
     },[])
 
+    const renderModalHandler = () => {
+        if(user && user.isLogin)
+            return modalOpen ? <DynamicModal content={content} /> : <></> ;
+        return;
+    }
 
     return  <>
+            {renderModalHandler()}
+
+            <ToastContainer 
+                position="top-left"
+                autoClose={2000}
+                hideProgressBar={true}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+
             <div className="dashboard">
                 <Container>
                     <Row>
@@ -99,7 +152,8 @@ function Events(){
                     <hr className="divider"/>   
                     {/* Here wil go dynamic UI */}
                     {events.map( ({name, date, host, details}, index) => {
-                        return <Row key={"events-"+index} style={styles.container}>
+                        return <div key={"events"+index}>
+                                <Row key={"events-container"+index} style={styles.container}>
                                     <Col sm={12} md={10} onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
                                         <Row>
                                         <Col sm={4} style={styles.heading}>{name} </Col>
@@ -113,11 +167,12 @@ function Events(){
                                     <Col sm={12} md={2}>
                                         <Row>
                                             <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={detailsHandler} style={styles.btn} variant="secondary">Details</Button></Col>                                    
-                                            <Col sm={6} md={12} style={styles.record}><Button style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
+                                            <Col sm={6} md={12} style={styles.record}><Button onClick={buyTicketHandler} style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
                                         </Row>
                                     </Col>
-                                    <hr className="divider"/>
                                 </Row> 
+                                <hr className="divider"/>
+                                </div>
                     })}
                 </Container>
             </div>

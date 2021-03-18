@@ -4,10 +4,8 @@ import { Button, Container, Row, Col } from 'react-bootstrap';
 import '../assets/css/Dashboard.css';
 
 import { useUserContext } from './MyContext';
-
+// APIs calling
 import {UserDashboardData} from './API/userAPIs';
-
-
 
 const styles = {
     container:{
@@ -67,6 +65,8 @@ function DashboardUser(){
             setAttendingEvents(res.data.attendingEvents);
             setOrganizingEvents(res.data.organizingEvents);
             setMyStalls(res.data.myStalls);
+            user.isLogin = true;
+            setUser(user);
         }).catch(err => {
             console.log(err)
         });
@@ -110,8 +110,8 @@ function DashboardUser(){
                     </Row> 
                     <hr className="divider"/>   
                     {notification.map( ({event, details}, index) => {
-                    return <div key={"notification-" + index}>
-                                <Row style={styles.container}>
+                    return <div key={"notification" + index}>
+                                <Row key={"notification-container" + index} style={styles.container}>
                                     <Col>
                                         <Row>
                                             <Col style={styles.heading}>Event: {event} </Col>
@@ -133,8 +133,8 @@ function DashboardUser(){
                     </Row> 
                     <hr className="divider"/>   
                     {attendingEvents.map( ({name, date, host, details}, index) => {
-                        return <div key={"attending-" + index}>
-                                    <Row  style={styles.container}>
+                        return <div key={"attending" + index}>
+                                    <Row  key={"attending-container" + index}  style={styles.container}>
                                         <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
@@ -157,8 +157,8 @@ function DashboardUser(){
                     </Row> 
                     <hr className="divider"/>   
                     {organizingEvents.map( ({name, date, host, details}, index) => {
-                        return <div key={"organize-" + index}>
-                                    <Row style={styles.container}>
+                        return <div key={"organize" + index}>
+                                    <Row key={"organize-container" + index} style={styles.container}>
                                         <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
@@ -181,8 +181,8 @@ function DashboardUser(){
                     </Row> 
                     <hr className="divider"/>   
                     {myStalls.map( ({name, date, host, details}, index) => {
-                        return <div key={"stall-"+ index}>
-                                    <Row style={styles.container}>
+                        return <div key={"stall"+ index}>
+                                    <Row key={"stall-container"+ index} style={styles.container}>
                                         <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
