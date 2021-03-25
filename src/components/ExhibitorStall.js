@@ -1,6 +1,6 @@
 import React from 'react';
 import TextEllipsis from 'react-text-ellipsis';
-
+import FloatActionButton from './FloatActionButton';
 
 import { Container, Row, Col, Image } from 'react-bootstrap';
 
@@ -85,6 +85,7 @@ function ExhibitorStall(){
                         </Col>
                     </Row>
                 {/* </Container> */}
+                <FloatActionButton />
             </>
 }
 export default ExhibitorStall;

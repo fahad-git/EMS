@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
+import { Button, Container, Row, Col } from 'react-bootstrap';
 import '../assets/css/Dashboard.css';
 
-import { useUserContext } from './MyContext';
+import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 // APIs calling
 import {UserDashboardData} from './API/userAPIs';
+import { RefreshToken } from './API/Auth';
 
 const styles = {
     container:{
@@ -36,8 +39,14 @@ const styles = {
 }
 
 function DashboardUser(){
+    const history = useHistory();
 
+    const [modalOpen, toggleModelOpen] = useModalContext();
+    const [isBaseHeader, toggleHeader] = useHeaderContext();
     const [user, setUser] = useUserContext();
+
+    const {state, dispatch} = useContext(MyContext);
+
 
     const [notification, setNotifications] = useState([]);
     const [attendingEvents, setAttendingEvents] = useState([]);
@@ -49,8 +58,23 @@ function DashboardUser(){
     const [totalUpcomingEvents, setTotalUpcomingEvents] = useState();
     const [totalStalls, setTotalStalls] = useState();
 
-    const selectedEventHandler = (name) => {
-        console.log("Row Clicked", name);
+    const attendingEventHandler = (id) => {
+        console.log("Row Clicked", id);
+        dispatch({type:"ATTEND-EVENT", params:{"id":id} });
+        history.push("/main-lobby/" + id);
+    }
+    
+    const organizingEventHandler = (id) => {
+        console.log("Row Clicked", id);
+        dispatch({type:"ATTEND-EVENT", params:{"id":id} });
+        history.push("/main-lobby/" + id);
+    }
+
+    
+    const stallEventHandler = (id) => {
+        console.log("Row Clicked", id);
+        dispatch({type:"ATTEND-EVENT", params:{"id":id} });
+        history.push("/main-lobby/" + id);
     }
 
     useEffect(()=>{
@@ -69,11 +93,53 @@ function DashboardUser(){
             setUser(user);
         }).catch(err => {
             console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
         });
     }, [])
 
 
     return  <>
+            <ToastContainer 
+                position="top-left"
+                autoClose={2000}
+                hideProgressBar={true}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+
             <div className="dashboard">
                 <Container>
                     <Row style={styles.circles} className="justify-content-center">
@@ -112,7 +178,7 @@ function DashboardUser(){
                     {notification.map( ({event, details}, index) => {
                     return <div key={"notification" + index}>
                                 <Row key={"notification-container" + index} style={styles.container}>
-                                    <Col>
+                                    <Col className="event-items">
                                         <Row>
                                             <Col style={styles.heading}>Event: {event} </Col>
                                         </Row>
@@ -132,10 +198,10 @@ function DashboardUser(){
                         <Col style={styles.title}>Attending Events</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {attendingEvents.map( ({name, date, host, details}, index) => {
+                    {attendingEvents.map( ({id, name, date, host, details}, index) => {
                         return <div key={"attending" + index}>
                                     <Row  key={"attending-container" + index}  style={styles.container}>
-                                        <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                        <Col onClick={ () => attendingEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
                                             <Col style={styles.record}>Date & Time: {date} 10 pm</Col>
@@ -156,10 +222,10 @@ function DashboardUser(){
                         <Col style={styles.title}>Organizing Events</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {organizingEvents.map( ({name, date, host, details}, index) => {
+                    {organizingEvents.map( ({id, name, date, host, details}, index) => {
                         return <div key={"organize" + index}>
                                     <Row key={"organize-container" + index} style={styles.container}>
-                                        <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                        <Col onClick={ () => organizingEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
                                             <Col style={styles.record}>Date & Time: {date} 10 pm</Col>
@@ -180,10 +246,10 @@ function DashboardUser(){
                         <Col style={styles.title}>My Stalls</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {myStalls.map( ({name, date, host, details}, index) => {
+                    {myStalls.map( ({id, name, date, host, details}, index) => {
                         return <div key={"stall"+ index}>
                                     <Row key={"stall-container"+ index} style={styles.container}>
-                                        <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                        <Col onClick={ () => stallEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{name} </Col>
                                             <Col style={styles.record}>Date & Time: {date} 10 pm</Col>

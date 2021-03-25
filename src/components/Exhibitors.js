@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Container, Row, Col, Image, Button,Nav } from 'react-bootstrap'
 import stall from './../assets/images/stall.png';
-
+import FloatActionButton from './FloatActionButton';
 import { ModalContext, useModalContext } from './MyContext';
 import DynamicModal from './DynamicModal';
 
@@ -37,6 +37,8 @@ const exhibitors = [{
 }
 ]
 
+
+
 const styles = {
     stall:{
         width: "calc(100px + 3vmin)",
@@ -60,7 +62,6 @@ const styles = {
 function Exhibitors(){
 
     const history = useHistory();
-
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [content, setContent] = useState();
 
@@ -77,7 +78,7 @@ function Exhibitors(){
     }    
 
     const exhibitorStallHandler = () => {
-        history.push("/exhibitor-stall");
+        history.push(history.location.pathname + "/exhibitor-stall");
     }
 
     return  <>
@@ -111,16 +112,17 @@ function Exhibitors(){
                             </Row>
                             <hr/>
                             <Row>
-                                {exhibitors.map(({name, img})=>(
-                                    <Col onClick={exhibitorStallHandler} style={styles.stallContainer}>
+                                {exhibitors.map(({name, img}, index)=>(
+                                    <Col key={index} onClick={exhibitorStallHandler} style={styles.stallContainer}>
                                         <Image src={img} style={styles.stall}/>
                                         <p>{name}</p>
-                                    </Col>                        
+                                    </Col>         
                                 ))}
                             </Row>
                         </Container>
                     </Col>
                 </Row>
+                <FloatActionButton />
             </>
 
 }

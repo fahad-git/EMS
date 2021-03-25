@@ -18,7 +18,6 @@ function CheckTokenExpiry () {
 
     let expiry = new Date(user.tokenExpiry);
     let current = new Date();
-    console.log(current , " : ", expiry)
     if(current > expiry){
         return new Promise((resolve, reject) => {
             reject("EXPIRED")

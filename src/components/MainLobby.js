@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import  { useHistory } from 'react-router-dom';
 import { Container, Row, Col, Image, Button } from 'react-bootstrap'
+import { ToastContainer, toast } from 'react-toastify';
+
 
 import ImageMapper from 'react-image-mapper';
 
 import IMAGE_URL from './../assets/images/main-lobby.jpg';
+
+import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
+
+
+// APIs goes here
+import { RefreshToken } from './API/Auth';
+import { EventOptions } from './API/userAPIs';
 
 // css goes here
 import './../assets/css/MainLobby.css';
@@ -23,9 +32,14 @@ const styles = {
         height:100
     },
     btn:{
-       height:"10vh",
+       height:"20vh",
        width:"15vh",
        marginTop:"50px",
+    },
+    userBtn:{
+        height:"20vh",
+        width:"20vh",
+        marginTop:"50px",
     },
     align:{
         marginLeft:"10px !important"
@@ -46,25 +60,120 @@ areas: [
 function MainLobby(){
 
     const history = useHistory();
+    const [modalOpen, toggleModelOpen] = useModalContext();
+    const [isBaseHeader, toggleHeader] = useHeaderContext();
+    const [user, setUser] = useUserContext();
+
+    var [userRole, setUserRole] = useState();
+
+    const [eventOptions, setEventOptions] = useState();
+
+    const {state, dispatch} = useContext(MyContext);
+
+    const ID = history.location.pathname.split("/").pop();
 
     const catwalkHandler = () => {
-        history.push("/catwalk");
+        history.push(history.location.pathname + "/catwalk");
     }
 
     const helpDeskHandler = () => {
-        history.push("/help-desk")
+        history.push("/main-lobby/" + ID + "/help-desk")
     }
 
     const exhibitorsHandler = () => {
-        history.push("/exhibitors");
+        history.push("/main-lobby/" + ID + "/exhibitors");
     }
 
     const webinarHandler = () => {
-        history.push("/webinar");
+        history.push("/main-lobby/" + ID + "/webinar");
     }
 
-    return  <>
+    const userManagementHandler = () => {
+        history.push("/main-lobby/" + ID + "/user-management");
+    }
+
+    useEffect(() => {
+
+        EventOptions(ID)
+        .then(res => {
+            setUserRole(res.data.role);
+            setEventOptions(res.data.event);
+        }).catch(err => {
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
+        });
+
+    }, [])
+
+    return  <>            
+                <ToastContainer 
+                    position="top-left"
+                    autoClose={2000}
+                    hideProgressBar={true}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
+
                 <div className="main-lobby">
+                    <Container style={styles.align} >
+                    <Row>
+                        <Col>
+                            <Button onClick={catwalkHandler}  style={{...styles.btn, ...{display: eventOptions && eventOptions.Catwalk? "block": "none"} } } variant="outline-light">{eventOptions && eventOptions.Catwalk?eventOptions.Catwalk:"" }</Button>
+                        </Col>
+                        <Col>
+                            <Button onClick={helpDeskHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.HelpDesk? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.HelpDesk?eventOptions.HelpDesk:"" } </Button>
+                        </Col>
+                        <Col>
+                            <Button onClick={userManagementHandler} style={{...styles.userBtn, ...{display: (userRole === "organizer" || userRole === "host") ? "block" : "none" }}} variant="outline-light">User Management </Button>
+                        </Col>
+                        <Col>
+                            <Button onClick={exhibitorsHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.Exhibitors? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.Exhibitors?eventOptions.Exhibitors:"" } </Button>
+                        </Col>
+                        <Col>
+                            <Button onClick={webinarHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.Webinar? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.Webinar?eventOptions.Webinar:"" } </Button>
+                        </Col>
+                    </Row>
+                    </Container>
+                </div>   
+            </>
+
+}
+
+export default MainLobby;
+
                     {/* <Container>
                         <Row>
                             <Col></Col>
@@ -89,23 +198,3 @@ function MainLobby(){
                         </Row>
                     </Container> */}
                     {/* <ImageMapper src={IMAGE_URL} map={AREAS_MAP} width={1400} /> */}
-                    <Container style={styles.align} >
-                    <Row>
-                        <Col>
-                            <Button onClick={catwalkHandler} style={styles.btn} className="float-left" variant="outline-light">Catwalk </Button>
-                        </Col>
-                        <Col>
-                            <Button onClick={helpDeskHandler} style={styles.btn} variant="outline-light">Help Desk </Button>
-                        </Col>
-                        <Col>
-                            <Button onClick={exhibitorsHandler} style={styles.btn} variant="outline-light">Exhibition </Button>
-                            <Button onClick={webinarHandler} style={styles.btn} className="float-right" variant="outline-light">Webinar </Button>
-                        </Col>
-                    </Row>
-                    </Container>
-                </div>   
-            </>
-
-}
-
-export default MainLobby;

@@ -77,14 +77,16 @@ function Main(){
                     <Route path='/register'> <Register /> </Route>
                     <Route path='/forget-password'> <ForgetPassword /> </Route>
                     <Route path='/dashboard'> <Dashboard /> </Route>
-                    <Route path='/user-management'> <UserManagement /> </Route>
+                    <Route path='/main-lobby/:ID/user-management'> <UserManagement /> </Route>
                     <Route path='/events'> <Events /> </Route>
-                    <Route path='/main-lobby'> <MainLobby /> </Route>
-                    <Route path='/catwalk'> <Catwalk /> </Route>
-                    <Route path='/exhibitors'> <Exhibitors /> </Route>
-                    <Route path='/exhibitor-stall'> <ExhibitorStall /> </Route>
-                    <Route path='/webinar'> <Webinar /> </Route>
-                    <Route path='/help-desk'> <HelpDesk /> </Route>
+                    <Route exact path='/main-lobby/:ID'> 
+                        <MainLobby /> 
+                    </Route>
+                    <Route exact path='/main-lobby/:ID/catwalk'> <Catwalk /> </Route>
+                    <Route exact path='/main-lobby/:ID/exhibitors'> <Exhibitors /> </Route>
+                    <Route exact path='/main-lobby/:ID/webinar'> <Webinar /> </Route>
+                    <Route exact path='/main-lobby/:ID/help-desk'> <HelpDesk /> </Route>
+                    <Route exact path='/main-lobby/:ID/exhibitors/exhibitor-stall'> <ExhibitorStall /> </Route>
                     <Route path='/settings'> <Setting /> </Route>
                     <Route path='/user-dashboard'><DashboardUser /></Route>
                     <Route path='/organize-events'><OrganizeEvents /></Route>

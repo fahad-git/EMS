@@ -1,4 +1,5 @@
 import React from 'react';
+import FloatActionButton from './FloatActionButton';
 import './../assets/css/MainLobby.css';
 
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
@@ -32,6 +33,7 @@ function HelpDesk(){
                     </Container>
     
                 </div>
+                <FloatActionButton />
             </>
 }
 export default HelpDesk;

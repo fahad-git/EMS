@@ -49,17 +49,17 @@ function DashboardHeader(){
   const renderHeaderOptions = () => {
     if(user && user.role == "admin"){
       return [
-        <Nav.Link className="ml-4" key="link-1" href="/main-lobby">Main Lobby</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-2" href="/user-management">Users</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-3" href="/events">Events</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-4" href="/settings">Settings</Nav.Link>
+        <Nav.Link className="ml-4" key="nav-link-1" href="/main-lobby">Main Lobby</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-2" href="/user-management">Users</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-3" href="/events">Events</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-4" href="/settings">Settings</Nav.Link>
       ]
     }else{
       return[
-        <Nav.Link className="ml-4" key="link-1" href="/user-dashboard">Dashboard</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-2" href="/settings">Profile</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-3" href="/events">Events</Nav.Link>,
-        <Nav.Link className="ml-4" key="link-3" href="/organize-events">Organize Events</Nav.Link>
+        <Nav.Link className="ml-4" key="nav-link-1" href="/user-dashboard">Dashboard</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-2" href="/settings">Profile</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-3" href="/events">Events</Nav.Link>,
+        <Nav.Link className="ml-4" key="nav-link-4" href="/organize-events">Organize Events</Nav.Link>
       ]
     }
   }

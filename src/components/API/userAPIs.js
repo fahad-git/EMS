@@ -4,13 +4,22 @@ import CheckTokenExpiry, {Base_URL} from './Config';
 
 export function UserDashboardData (){
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    var token = "";
-    if(user)
-        token = user.token;
-    const AuthorizationHeader = { "Authorization": "Bearer " + token }
+    return CheckTokenExpiry()
+    .then(res => {
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.get(Base_URL + '/dashboards/user', { headers:AuthorizationHeader })
     
-    return axios.get(Base_URL + '/dashboards/user', { headers:AuthorizationHeader })
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
 }
 
 export function UpcomingEventsData(){
@@ -19,7 +28,9 @@ export function UpcomingEventsData(){
     // if(user)
     //     token = user.token;
     // const AuthorizationHeader = { "Authorization": "Bearer " + token }
-    return axios.get(Base_URL + '/events/user')
+
+    
+    return axios.get(Base_URL + '/events/user');
 }
 
 export function OrganizingEventsData(){
@@ -48,5 +59,51 @@ export function OrganizingEventsData(){
     } );
 }
 
+
+export function EventDetailsByID (ID){
+
+    return CheckTokenExpiry()
+    .then(res => {
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.get(Base_URL + '/events/user/' + ID, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+}
+
+// API for requesting stall
+export function RequestForStall(){
+
+    
+}
+
+export function EventOptions(ID){
+    return CheckTokenExpiry()
+    .then(res => {
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.get(Base_URL + '/events/user/options/' + ID, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+
+}
 
 export default null;

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import FloatActionButton from './FloatActionButton';
 import './../assets/css/MainLobby.css';
 
 function Webinar(){
@@ -14,6 +14,7 @@ function Webinar(){
                     <a href="#webinar4"> Webinar 4</a>
                     <a href="#webinar5"> Webinar 5</a>
                 </div>
+                <FloatActionButton />
             </>
 }
 export default Webinar;

@@ -60,3 +60,11 @@
       float:right !important;
   }
 
+.dashboard .event-items{
+    transition: transform .2s;
+}
+
+.dashboard .event-items:hover{
+    transform: scale(1.1);
+    border-style: ridge;
+}

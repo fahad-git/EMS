@@ -14,6 +14,7 @@ import { useHistory } from 'react-router-dom';
 import { OrganizingEventsData } from "./API/userAPIs";
 
 const tmp = [{
+    "id":1,
     "name":"Health Awareness",
     "date":"10-1-2021",
     "host":"Ali",
@@ -33,8 +34,6 @@ const tmp = [{
 const styles = {
     container:{
         marginTop:20,
-        outline:5,
-        border:5
     },
     title:{
         fontSize:"calc(5px + 3vmin)",
@@ -68,13 +67,25 @@ function OrganizingEvents(){
     const [user, setUser] = useUserContext();
 
     const [organizingEvents, setOrganizingEvents] = useState(tmp);
+    const [allEvents, setAllEvents] = useState([]);
+
     const [content, setContent] = useState();
 
     const [searchQuery, setSearchQuery] = useState("");
 
     const searchHandler = () => {
-        console.log(searchQuery);
+
+        if(searchQuery.trim() === "")
+            {
+                setOrganizingEvents(allEvents);
+            }
+        let eventList = []
+        for(let tmp of allEvents)
+            if(tmp.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                eventList.push(tmp)
+                setOrganizingEvents(eventList)
     }
+
 
     const organizeEventHandler = () => {
         let cont = {
@@ -95,6 +106,7 @@ function OrganizingEvents(){
         OrganizingEventsData()
         .then(res => {
             setOrganizingEvents(res.data)
+            setAllEvents(res.data);
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){
@@ -126,15 +138,6 @@ function OrganizingEvents(){
                     window.location.reload();
                     history.push("/");
                 })
-                // alert("session expire")
-                // let cont = {
-                //     header:"Session End",
-                //     component:<RefreshUserToken/>,
-                //     footer:""
-                //   }
-                // setContent(cont);
-                // toggleModelOpen(true);
-
             }
         })
     },[])
@@ -184,7 +187,7 @@ function OrganizingEvents(){
                     {/* Here wil go dynamic UI */}
                     {organizingEvents.map( ({name, date, host, details}, index) => {
                         return <div key={"events"+index}>
-                                <Row key={"events-container"+index} style={styles.container}>
+                                <Row key={"events-container"+index} className="event-items" style={styles.container}>
                                     <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
                                         <Row>
                                         <Col sm={5} style={styles.heading}>{name} </Col>

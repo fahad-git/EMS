@@ -1,4 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useReducer } from 'react';
+import { initialState, reducer } from './reducers/userReducer';
+
 
 localStorage.setItem("modalOpen", null);
 
@@ -27,6 +29,10 @@ export function useHeaderContext(){
 // }
 
 export function MyProvider({ children }){
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+
     const [modalOpen, toggleModelOpenHandler] = useState(false);
     const [user, setUserHandler] = useState({});
     const [isBaseHeader, toggleHeaderHandler] = useState(true);
@@ -38,8 +44,8 @@ export function MyProvider({ children }){
     //     console.log(isBaseHeader)
     //   }, [toggleHeader]);
     
-    function setUser(user) {
 
+    function setUser(user) {
         localStorage.setItem("user", JSON.stringify(user) );
         setUserHandler(user);
     }
@@ -59,8 +65,10 @@ export function MyProvider({ children }){
     return(
         <UserContext.Provider value={[JSON.parse(localStorage.getItem("user")), setUser]}>
             <ModalContext.Provider value={[localStorage.getItem("modalOpen") == String(true), toggleModelOpen]}>
-                <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") == String(true), toggleHeader]}>
+                 <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") == String(true), toggleHeader]}>
+                    <MyContext.Provider value={{state, dispatch}}>
                     { children }
+                    </MyContext.Provider>
                 </HeaderContext.Provider>
             </ModalContext.Provider>
         </UserContext.Provider>
