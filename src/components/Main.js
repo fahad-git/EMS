@@ -12,6 +12,7 @@ import UserManagement from './UserManagement';
 import Events from './Events';
 import MainLobby from './MainLobby';
 import Catwalk from './CatWalk';
+import AddVideos from './AddVideos';
 import Exhibitors from './Exhibitors';
 import ExhibitorStall from './ExhibitorStall';
 import Webinar from './Webinar';
@@ -83,6 +84,8 @@ function Main(){
                         <MainLobby /> 
                     </Route>
                     <Route exact path='/main-lobby/:ID/catwalk'> <Catwalk /> </Route>
+                    <Route path='/main-lobby/:ID/catwalk/add-videos'> <AddVideos /> </Route>
+
                     <Route exact path='/main-lobby/:ID/exhibitors'> <Exhibitors /> </Route>
                     <Route exact path='/main-lobby/:ID/webinar'> <Webinar /> </Route>
                     <Route exact path='/main-lobby/:ID/help-desk'> <HelpDesk /> </Route>

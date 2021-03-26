@@ -5,9 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 
 import ImageMapper from 'react-image-mapper';
-
-import IMAGE_URL from './../assets/images/main-lobby.jpg';
-
+import IMAGE_URL from './../assets/images/main-lobby.jpg'
 import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 
 
@@ -73,7 +71,7 @@ function MainLobby(){
     const ID = history.location.pathname.split("/").pop();
 
     const catwalkHandler = () => {
-        history.push(history.location.pathname + "/catwalk");
+            history.push(history.location.pathname + "/catwalk");
     }
 
     const helpDeskHandler = () => {

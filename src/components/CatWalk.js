@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
-
-import { Row, Col, Image, Container } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Row, Col, Image, Container, Button } from 'react-bootstrap';
 import TextEllipsis from 'react-text-ellipsis';
 import FloatActionButton from './FloatActionButton';
+import { ToastContainer, toast } from 'react-toastify';
+import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
+
+// APIs goes here
+import { RefreshToken } from './API/Auth';
+import { EventOptions } from './API/userAPIs';
+
 
 
 const videos = [
@@ -49,15 +56,89 @@ const styles = {
 function CatWalk(){
 
     const [selectedVideo, setSelectedVideo] = useState(videos[0]);
+    const [userRole, setUserRole] = useState();
+    const [modalOpen, toggleModelOpen] = useModalContext();
+    const [isBaseHeader, toggleHeader] = useHeaderContext();
+    const [user, setUser] = useUserContext();
+
+
+    const history = useHistory();
 
     const selectCatwalkHandler = (catwalk) => {
         setSelectedVideo(catwalk);
         console.log("Working")
     }
 
+    const editVideoHandler = () => {
+        history.push(history.location.pathname + "/add-videos");
+    }
+
+    useEffect(() => {
+
+            var arr = history.location.pathname.split("/");
+            console.log(arr)
+        
+            var ID = -1;
+            for(let i of arr)
+                if(!Number.isNaN(parseInt(i))){
+                    ID = parseInt(i);
+                    break;
+                }
+                
+
+            if(ID === -1){
+                history.goBack();
+                return;
+            }
+
+            EventOptions(ID)
+            .then(res => {
+                setUserRole(res.data.role);
+            }).catch(err => {
+                console.log(err)
+                if(err.message === "INVALID"){
+                    toast("Please login to access events", {
+                        type:"info",
+                        });
+                }else if(err.message === "EXPIRED"){
+                    toast("You must login first", {
+                        type:"info",
+                        });
+                        localStorage.clear();
+                        toggleHeader(true);
+                        window.location.reload();
+                        history.push("/");
+                }else if(err.message === "REFRESH"){
+                    RefreshToken()
+                    .then(res => {
+                        if(res.data.success){
+                            console.log("Token Refreshed")
+                            var d = new Date();
+                            d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                            res.data.user.tokenExpiry = d;
+                            setUser(res.data.user);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        localStorage.clear();
+                        toggleHeader(true);
+                        window.location.reload();
+                        history.push("/");
+                    })
+                }
+            });
+    
+    }, [])
+
     return  <>
                     <hr/>
                     <Container>
+                    <Row style={{display: (userRole === "attendee") ? "none" : "block" }}>
+                        <Col>
+                            <Button className="mb-5 float-right" variant="secondary" onClick={ editVideoHandler }>Edit</Button>
+                        </Col>
+                    </Row>
+
                     <Row>
                         <Col>
                             <Row>
