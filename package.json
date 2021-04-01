@@ -17,6 +17,7 @@
     "react-floating-action-button": "^1.0.5",
     "react-hook-form": "^6.14.2",
     "react-image-mapper": "0.0.15",
+    "react-phone-input-2": "^2.13.9",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",

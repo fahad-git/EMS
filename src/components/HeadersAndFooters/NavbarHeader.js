@@ -53,9 +53,7 @@ return  <Navbar collapseOnSelect expand="md" bg="transparent" variant="dark" sti
               <Nav.Link className="mx-4" href="#login" onClick={loginHandler}>Login</Nav.Link>
             </Nav>
           </Navbar.Collapse>
-
-          {modalOpen?  <DynamicModal content={content} />: ''}
-
+              {modalOpen ?  <DynamicModal content={content} />: ''}
         </Navbar>
 }
 

@@ -1,0 +1,11 @@
+.error {
+color: #fdfbfc;
+}
+
+.error::before {
+content: "⚠ ";
+}
+
+.services .form-control{
+    width: 100%;
+}

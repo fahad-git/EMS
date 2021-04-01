@@ -25,6 +25,9 @@ export function RefreshToken (){
     return axios.get(Base_URL + '/users/token',  { headers:AuthorizationHeader } )
 }
 
+export function CheckUsernameAvailability(value){
+    return axios.post(Base_URL + '/users/check-username', {"username" : value} )
+}
 
 export function Logout (){
     const user = JSON.parse(localStorage.getItem("user"));

@@ -17,7 +17,7 @@ function NavbarFooter(){
     const [user, setUser] = useUserContext();
 
     return  <>
-    <Row style={{minHeight:"10vh"}}></Row>
+    {/* <Row style={{minHeight:"10vh"}}></Row> */}
     <div className="App-footer">
                 <CardGroup >
                 {footerContent.map((content,index) => {

@@ -60,7 +60,7 @@ function Main(){
     // }, []) 
 
     useEffect(()=>{
-        const paths = ["/home", "/services", "/aboutUs", "/contactUs"]
+        const paths = ["/home", "/services", "/aboutUs", "/contactUs", "/register"]
         if(!user &&  !paths.includes(window.location.pathname)){
             toggleHeader(true);
             history.push('/');
