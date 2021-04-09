@@ -7,7 +7,7 @@ import '../assets/css/Dashboard.css';
 
 import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 // APIs calling
-import {UserDashboardData} from './API/userAPIs';
+import {UpcomingEventsData, UserDashboardData} from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
 const styles = {
@@ -51,7 +51,8 @@ function DashboardUser(){
     const [notification, setNotifications] = useState([]);
     const [attendingEvents, setAttendingEvents] = useState([]);
     const [organizingEvents, setOrganizingEvents] = useState([]);
-    const [myStalls, setMyStalls] = useState([])
+    const [myStalls, setMyStalls] = useState([]);
+    const [upcomingEvents, setUpcomingEvents] = useState([]);
     
     const [totalOrganizingEvents, setTotalOrganizingEvents] = useState();
     const [totalAttendingEvents, setTotalAttendingEvents] = useState();
@@ -89,6 +90,7 @@ function DashboardUser(){
             setAttendingEvents(res.data.attendingEvents);
             setOrganizingEvents(res.data.organizingEvents);
             setMyStalls(res.data.myStalls);
+            setUpcomingEvents(res.data.upcomingEvents);
             user.isLogin = true;
             setUser(user);
         }).catch(err => {
@@ -198,17 +200,17 @@ function DashboardUser(){
                         <Col style={styles.title}>Attending Events</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {attendingEvents.map( ({id, name, date, host, details}, index) => {
+                    {attendingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"attending" + index}>
                                     <Row  key={"attending-container" + index}  style={styles.container}>
-                                        <Col onClick={ () => attendingEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
+                                        <Col onClick={ () => attendingEventHandler(event_Id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
-                                            <Col style={styles.heading}>{name} </Col>
-                                            <Col style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                            <Col style={styles.heading}>{event_name} </Col>
+                                            <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
                                             </Row>
                                             <Row>
-                                            <Col style={styles.record}>Organizier: {host} </Col>
-                                            <Col style={styles.record}>Details: {details} </Col>
+                                            <Col style={styles.record}>Organizier: {host_name} </Col>
+                                            <Col style={styles.record}>Type: {type} </Col>
                                             </Row>
                                         </Col>
                                     </Row> 
@@ -222,17 +224,17 @@ function DashboardUser(){
                         <Col style={styles.title}>Organizing Events</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {organizingEvents.map( ({id, name, date, host, details}, index) => {
+                    {organizingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"organize" + index}>
                                     <Row key={"organize-container" + index} style={styles.container}>
-                                        <Col onClick={ () => organizingEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
+                                        <Col onClick={ () => organizingEventHandler(event_Id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
-                                            <Col style={styles.heading}>{name} </Col>
-                                            <Col style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                            <Col style={styles.heading}>{event_name} </Col>
+                                            <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
                                             </Row>
                                             <Row>
-                                            <Col style={styles.record}>Organizier: {host} </Col>
-                                            <Col style={styles.record}>Details: {details} </Col>
+                                            <Col style={styles.record}>Organizier: {host_name} </Col>
+                                            <Col style={styles.record}>Type: {type} </Col>
                                             </Row>
                                         </Col>
                                     </Row> 
@@ -246,17 +248,17 @@ function DashboardUser(){
                         <Col style={styles.title}>My Stalls</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {myStalls.map( ({id, name, date, host, details}, index) => {
+                    {myStalls.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"stall"+ index}>
                                     <Row key={"stall-container"+ index} style={styles.container}>
-                                        <Col onClick={ () => stallEventHandler(id)}  className="event-items"  style={styles.eventSelection}>
+                                        <Col onClick={ () => stallEventHandler(event_Id)}  className="event-items"  style={styles.eventSelection}>
                                             <Row>
-                                            <Col style={styles.heading}>{name} </Col>
-                                            <Col style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                            <Col style={styles.heading}>{event_name} </Col>
+                                            <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
                                             </Row>
                                             <Row>
-                                            <Col style={styles.record}>Organizier: {host} </Col>
-                                            <Col style={styles.record}>Details: {details} </Col>
+                                            <Col style={styles.record}>Organizier: {host_name} </Col>
+                                            <Col style={styles.record}>Type: {type} </Col>
                                             </Row>
                                         </Col>
                                     </Row> 
@@ -265,7 +267,31 @@ function DashboardUser(){
                                                                 
                     })}
                 </Container>
-
+                <Container>
+                    <Row style={styles.container}>
+                        <Col style={styles.title}>Upcoming Events</Col>
+                    </Row> 
+                    <hr className="divider"/>
+                    {upcomingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
+                        return <div key={"stall"+ index}>
+                                    <Row key={"stall-container"+ index} style={styles.container}>
+                                        <Col onClick={ () => toast("Click events to see details", {type:"info"})} className="event-items"  style={styles.eventSelection}>
+                                            <Row>
+                                            <Col style={styles.heading}>{event_name} </Col>
+                                            <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
+                                            </Row>
+                                            <Row>
+                                            <Col style={styles.record}>Organizier: {host_name} </Col>
+                                            <Col style={styles.record}>Type: {type} </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row> 
+                                    <hr className="divider"/>
+                                </div>  
+                    })}
+                </Container>
+                <div style={{height:"12vh"}}>
+                </div>         
             </div>
             </>
 

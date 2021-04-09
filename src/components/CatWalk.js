@@ -8,27 +8,27 @@ import MyContext, { useModalContext,  useHeaderContext, useUserContext } from '.
 
 // APIs goes here
 import { RefreshToken } from './API/Auth';
-import { EventOptions } from './API/userAPIs';
+import { EventOptions, EventVideoById } from './API/userAPIs';
 
 
 
-const videos = [
-    {
-        catwalk:"https://www.youtube.com/embed/I5HzV76t01c",
-        title:"VEMINA CITY CATWALK CPM Moscow Fall 2016 2017 by Fashion Channel",
-        description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-    },
-    {
-        catwalk:"https://www.youtube.com/embed/7ccefq8s7eU",
-        title:"Evolving Trends in Runway Fashion - 2017 to 2018 Spring-Summer Seasons",
-        description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-    },
-    {
-        catwalk:"https://www.youtube.com/embed/-PtDp5C6QB4",
-        title:"Evolving Trends in Runway Fashion - 2018 to 2019 Spring-Summer Seasons",
-        description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-    }
-]
+// const videos = [
+//     {
+//         catwalk:"https://www.youtube.com/embed/I5HzV76t01c",
+//         title:"VEMINA CITY CATWALK CPM Moscow Fall 2016 2017 by Fashion Channel",
+//         description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//     },
+//     {
+//         catwalk:"https://www.youtube.com/embed/7ccefq8s7eU",
+//         title:"Evolving Trends in Runway Fashion - 2017 to 2018 Spring-Summer Seasons",
+//         description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//     },
+//     {
+//         catwalk:"https://www.youtube.com/embed/-PtDp5C6QB4",
+//         title:"Evolving Trends in Runway Fashion - 2018 to 2019 Spring-Summer Seasons",
+//         description:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
+//     }
+// ]
 
 const styles = {
     frame : {
@@ -36,6 +36,10 @@ const styles = {
         height:"100%"
     },
     align : {
+        textAlign:"left",
+    },
+    description:{
+        position:"absolute",
         textAlign:"left"
     },
     header: {
@@ -44,29 +48,32 @@ const styles = {
     },
     tile:{
         width:"100%",
-        height:"30%",
-        cursor: "pointer"
+        minHeight:"15%",
+        cursor: "pointer",
+        marginBottom:"50px"
     },
     videoFrame:{
         width:"100%",
-        height:"40%"
+        height:"400px"
     }
 }
 
 function CatWalk(){
 
-    const [selectedVideo, setSelectedVideo] = useState(videos[0]);
-    const [userRole, setUserRole] = useState();
+    const [selectedVideo, setSelectedVideo] = useState();
+    const [isOrganizer, setIsOrganizer] = useState(0);
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [isBaseHeader, toggleHeader] = useHeaderContext();
     const [user, setUser] = useUserContext();
 
+    const [videos, setVideos] = useState([]);
+
+    const [screenName, setScreenName] = useState("");
 
     const history = useHistory();
 
     const selectCatwalkHandler = (catwalk) => {
         setSelectedVideo(catwalk);
-        console.log("Working")
     }
 
     const editVideoHandler = () => {
@@ -74,7 +81,6 @@ function CatWalk(){
     }
 
     useEffect(() => {
-
             var arr = history.location.pathname.split("/");
             console.log(arr)
         
@@ -85,15 +91,54 @@ function CatWalk(){
                     break;
                 }
                 
-
             if(ID === -1){
                 history.goBack();
                 return;
             }
 
+            EventVideoById(ID)
+            .then(res => {
+                console.log(res.data);
+               setVideos(res.data);
+               setSelectedVideo(res.data? res.data[0]: []);
+            }).catch(err => {
+                console.log(err)
+                if(err.message === "INVALID"){
+                    toast("Please login to access events", {
+                        type:"info",
+                        });
+                }else if(err.message === "EXPIRED"){
+                    toast("You must login first", {
+                        type:"info",
+                        });
+                        localStorage.clear();
+                        toggleHeader(true);
+                        window.location.reload();
+                        history.push("/");
+                }else if(err.message === "REFRESH"){
+                    RefreshToken()
+                    .then(res => {
+                        if(res.data.success){
+                            console.log("Token Refreshed")
+                            var d = new Date();
+                            d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                            res.data.user.tokenExpiry = d;
+                            setUser(res.data.user);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        localStorage.clear();
+                        toggleHeader(true);
+                        window.location.reload();
+                        history.push("/");
+                    })
+                }
+            });
+
             EventOptions(ID)
             .then(res => {
-                setUserRole(res.data.role);
+                setScreenName(res.data[0][0].video)
+                setIsOrganizer(res.data[1][0].organizer);
             }).catch(err => {
                 console.log(err)
                 if(err.message === "INVALID"){
@@ -132,34 +177,28 @@ function CatWalk(){
 
     return  <>
                     <hr/>
-                    <Container>
-                    <Row style={{display: (userRole === "attendee") ? "none" : "block" }}>
+                    <Container fluid>
+                    <Row style={styles.header} className="mb-4">
                         <Col>
-                            <Button className="mb-5 float-right" variant="secondary" onClick={ editVideoHandler }>Edit</Button>
+                            <h1> {screenName} </h1>
+                        </Col>    
+                        <Col style={{display: (isOrganizer) ? "block" : "none" }}>
+                            <Button className="float-right" style={{height:"100%"}} variant="secondary" onClick={ editVideoHandler }>Edit</Button>
                         </Col>
-                    </Row>
-
+                    </Row>  
                     <Row>
-                        <Col>
+                        <Col xs={{span:12, order:'first'}} sm={4} style={{overflowY:"scroll"}}>
                             <Row>
                                 <Col>
-                                    <h1 style={styles.header}> CatWalks </h1>
-                                </Col>    
-                            </Row>  
-                            <Row>
-                                <Col>
-                                    {videos.map( ({catwalk, title, description}, index) => (
+                                    {videos.map( ({video_Id, event_Id, title, description, type, link, status}, index) => (
                                         <span key = {index}>
-                                            <Row style={styles.tile} onClick={ () => selectCatwalkHandler({catwalk, title, description}) }>
+                                            <Row style={styles.tile} className="mb-5" onClick={ () => selectCatwalkHandler({video_Id, link, title, description}) }>
                                                 <Col>
-                                            
-                                                <iframe
-                                                    
-                                                    style = {styles.frame}
-                                                    src= {catwalk}
-                                                >
-                                                </iframe>
-
+                                                    <iframe
+                                                        style = {styles.frame}
+                                                        src= {link}
+                                                    >
+                                                    </iframe>
                                                 </Col>
                                                 <Col>
                                                     <p style={styles.align}><b>{title} </b></p>
@@ -173,9 +212,11 @@ function CatWalk(){
                                                         useJsOnly={true} 
                                                         onResult={(result) => { 
                                                             if (result === TextEllipsis.RESULT.TRUNCATED)
-                                                                console.log('text get truncated');
+                                                                console.log();
+                                                            // console.log('text get truncated');
                                                             else 
-                                                                console.log('text does not get truncated');
+                                                                console.log();
+                                                            // console.log('text does not get truncated');
                                                             }}>
                                                     {description}
                                                     </TextEllipsis>                                                        
@@ -189,12 +230,12 @@ function CatWalk(){
                             </Row>
                         </Col>
   
-                        <Col>
+                        <Col xs={{span:12, order:'last'}} sm={8} style={{overflowY:"scroll"}}> 
                             <Row style={styles.videoFrame }>
-                                <Col>
+                                <Col xs={12}>
                                     <iframe 
                                         style = {styles.frame}
-                                        src= {selectedVideo.catwalk}
+                                        src= {selectedVideo?.link}
                                         frameBorder="0" 
                                         allowFullScreen>
                                     </iframe>
@@ -203,18 +244,20 @@ function CatWalk(){
                             <Row>
                                 <Col>
                                     <h4 style={styles.align}>
-                                        { selectedVideo.title }
+                                        { selectedVideo?.title }
+                                        <br/>
+                                        {selectedVideo?.type}
                                     </h4>
-                                    <p style={styles.align}>
-                                        { selectedVideo.description }
+                                    <p style={styles.description}>
+                                        { selectedVideo?.description }
                                     </p>
                                 </Col>
                             </Row>
                         </Col>
                     </Row>
+                    <div style={{height:"12vh"}}></div>      
                     </Container>
                     <FloatActionButton />
-
             </>
 
 }

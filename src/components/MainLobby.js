@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import  { useHistory } from 'react-router-dom';
 import { Container, Row, Col, Image, Button } from 'react-bootstrap'
 import { ToastContainer, toast } from 'react-toastify';
-
+import FloatActionButton from './FloatActionButton';
 
 import ImageMapper from 'react-image-mapper';
 import IMAGE_URL from './../assets/images/main-lobby.jpg'
@@ -30,14 +30,14 @@ const styles = {
         height:100
     },
     btn:{
-       height:"20vh",
-       width:"15vh",
-       marginTop:"50px",
+        width:"150px",
+        height:"100px",
+        marginTop:"10px",
     },
     userBtn:{
-        height:"20vh",
-        width:"20vh",
-        marginTop:"50px",
+        width:"150px",
+        height:"100px",
+        marginTop:"10px",
     },
     align:{
         marginLeft:"10px !important"
@@ -62,7 +62,7 @@ function MainLobby(){
     const [isBaseHeader, toggleHeader] = useHeaderContext();
     const [user, setUser] = useUserContext();
 
-    var [userRole, setUserRole] = useState();
+    var [isOrganizer, toggleIsOrganizer] = useState(false);
 
     const [eventOptions, setEventOptions] = useState();
 
@@ -90,12 +90,13 @@ function MainLobby(){
         history.push("/main-lobby/" + ID + "/user-management");
     }
 
+
     useEffect(() => {
 
         EventOptions(ID)
         .then(res => {
-            setUserRole(res.data.role);
-            setEventOptions(res.data.event);
+            setEventOptions(res.data[0][0]);
+            toggleIsOrganizer(res.data[1][0].organizer);
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){
@@ -146,26 +147,37 @@ function MainLobby(){
                 />
 
                 <div className="main-lobby">
-                    <Container style={styles.align} >
-                    <Row>
+                    <Container fluid style={{position: 'absolute', top: 100}}>
+                    <Row className="justify-content-center">
                         <Col>
-                            <Button onClick={catwalkHandler}  style={{...styles.btn, ...{display: eventOptions && eventOptions.Catwalk? "block": "none"} } } variant="outline-light">{eventOptions && eventOptions.Catwalk?eventOptions.Catwalk:"" }</Button>
+                            <center>
+                            <Button size="lg" onClick={catwalkHandler}  style={{...styles.btn, ...{display: eventOptions && eventOptions.video? "block": "none"} } } variant="outline-light">{eventOptions && eventOptions.video?eventOptions.video:"" }</Button>
+                            </center>
                         </Col>
                         <Col>
-                            <Button onClick={helpDeskHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.HelpDesk? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.HelpDesk?eventOptions.HelpDesk:"" } </Button>
+                            <center>
+                            <Button onClick={helpDeskHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.helpdesk? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.helpdesk?eventOptions.helpdesk:"" } </Button>
+                            </center>
+                        </Col>
+                        <Col style={{display: (isOrganizer) ? "block" : "none" }}>
+                            <center>
+                            <Button onClick={userManagementHandler} style={styles.userBtn} variant="outline-light">User Management</Button>
+                            </center>
+                        </Col>                     
+                        <Col>
+                            <center>
+                            <Button onClick={exhibitorsHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.stalls? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.stalls?eventOptions.stalls:"" } </Button>
+                            </center>
                         </Col>
                         <Col>
-                            <Button onClick={userManagementHandler} style={{...styles.userBtn, ...{display: (userRole === "organizer" || userRole === "host") ? "block" : "none" }}} variant="outline-light">User Management </Button>
-                        </Col>
-                        <Col>
-                            <Button onClick={exhibitorsHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.Exhibitors? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.Exhibitors?eventOptions.Exhibitors:"" } </Button>
-                        </Col>
-                        <Col>
-                            <Button onClick={webinarHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.Webinar? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.Webinar?eventOptions.Webinar:"" } </Button>
+                            <center>
+                            <Button onClick={webinarHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.links? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.links?eventOptions.links:"" } </Button>
+                            </center>
                         </Col>
                     </Row>
                     </Container>
                 </div>   
+                {/* <FloatActionButton /> */}
             </>
 
 }

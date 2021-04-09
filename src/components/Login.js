@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+// import passwordHash from 'password-hash';
 import { useHistory } from 'react-router-dom';
 import {Form, Container, Row, Button, Col} from 'react-bootstrap';
 import { useForm } from "react-hook-form";
 
 import { Authenticate } from './API/Auth';
- 
+import bcrypt from 'bcryptjs';
+
 // CSS import goes here
 import './../assets/css/BaseComponents.css';
 
@@ -22,14 +24,17 @@ function Login(){
         msg:""
     })
 
-    const { register, errors, watch, handleSubmit } = useForm();
-    
+    const { register, errors, watch, handleSubmit } = useForm();    
+
     const onSubmit = data => {
+        let buff = new Buffer(data.password);
+        data.password = buff.toString('base64');         
         Authenticate(data)
         .then((res) => {
             if(res.data.success)
             {
             const usr = res.data.user;
+            console.log(usr)
             var d = new Date();
             d.setSeconds(d.getSeconds() + usr.tokenExpiry);
             usr.tokenExpiry = d;
@@ -37,7 +42,7 @@ function Login(){
             setUser(usr);
             toggleHeader(false);
             toggleModelOpen(false);
-            if(usr.role === "admin")
+            if(usr.role === "Admin")
                 history.push("/dashboard");
             else
                 history.push("/user-dashboard");
@@ -45,14 +50,14 @@ function Login(){
             }else{
                 setError({
                     display:"block",
-                    msg:res.statusText
+                    msg:res.data.message
                 })
             }
         }).catch((err) => {
-            console.log(err);
+            // console.log(err.response.data);
             setError({
                 display:"block",
-                msg:err.message
+                msg:err.response.data.message
             })
         })
 

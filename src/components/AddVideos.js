@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import DynamicModal from './DynamicModal';
+import { ToastContainer, toast } from 'react-toastify';
 
-import { useModalContext } from "./MyContext";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+
+import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 
 import AddVideoForm from "./AddVideoForm";
+import FloatActionButton from './FloatActionButton';
+
+import { RefreshToken } from './API/Auth';
+import { EventVideoById, RemoveVideoFromEvent } from './API/userAPIs';
 
 const videos = [
     {
@@ -36,8 +44,13 @@ const styles = {
 function AddVideos() {
 
     const [modalOpen, toggleModelOpen] = useModalContext();
+    const [isBaseHeader, toggleHeader] = useHeaderContext();
+    const [user, setUser] = useUserContext();
+
     const [content, setContent] = useState();
     const history = useHistory()
+
+    const [videos, setVideos] = useState([]);
 
     const addVideoHandler = () => {
             let cont = {
@@ -48,11 +61,129 @@ function AddVideos() {
             setContent(cont);
             toggleModelOpen(true);
     }
+
+    const removeVideoHandler = (videoId, eventId) => {
+        confirmAlert({
+            title: 'Removing Video',
+            message: 'Are you sure to remove this video?',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    
+                    RemoveVideoFromEvent({'video_Id':videoId, 'event_Id':eventId})
+                    .then(res => {
+                        toast("Removed Successfully", {
+                            type:"info",
+                            });
+                        window.location.reload();
+                    }).catch(err => {
+                        console.log(err)
+                        if(err.message === "INVALID"){
+                            toast("Please login to access events", {
+                                type:"info",
+                                });
+                        }else if(err.message === "EXPIRED"){
+                            toast("You must login first", {
+                                type:"info",
+                                });
+                                localStorage.clear();
+                                toggleHeader(true);
+                                window.location.reload();
+                                history.push("/");
+                        }else if(err.message === "REFRESH"){
+                            RefreshToken()
+                            .then(res => {
+                                if(res.data.success){
+                                    console.log("Token Refreshed")
+                                    var d = new Date();
+                                    d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                                    res.data.user.tokenExpiry = d;
+                                    setUser(res.data.user);
+                                }
+                            }).catch(err => {
+                                console.log(err);
+                                localStorage.clear();
+                                toggleHeader(true);
+                                window.location.reload();
+                                history.push("/");
+                            })
+                        }
+                    });
+
+
+
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => console.log()
+              }
+            ]
+          });
+    }
     
     const viewVideoHandler = () => {
         history.goBack();
     }
 
+    useEffect(()=>{
+
+        var arr = history.location.pathname.split("/");
+        console.log(arr)
+    
+        var ID = -1;
+        for(let i of arr)
+            if(!Number.isNaN(parseInt(i))){
+                ID = parseInt(i);
+                break;
+            }
+            
+        if(ID === -1){
+            history.goBack();
+            return;
+        }
+
+        
+        EventVideoById(ID)
+        .then(res => {
+            console.log(res.data);
+           setVideos(res.data);
+        }).catch(err => {
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
+        });
+
+    }, [modalOpen])
     
 
     return  <>
@@ -62,31 +193,34 @@ function AddVideos() {
                     <Row>
                         <Col>
                             <Button className="mb-5 float-right" variant="secondary" onClick={ viewVideoHandler }>View</Button>
-                            <Button className="mb-5 float-right" split variant="secondary" onClick={ addVideoHandler }>ADD Video</Button>
+                            <Button className="mb-5 float-right" variant="secondary" onClick={ addVideoHandler }>ADD Video</Button>
                         </Col>
                     </Row>
                     {
-                    videos.map( ({ catwalk, title, description}, index) => (
+                    videos.map( ({video_Id, event_Id, title, description, type, link, status}, index) => (
                     <Row key={index} className="mb-5">
                         <Col className="event-items">
                             <Row><Col>
                             <h3>{title}</h3>
+                            <h4>Category: {type}</h4>
                             <p>{description}</p>
                             </Col></Row>
                             <Row>
                             <Col sm={8} >
-                                <p>Link: <a href={catwalk} >{catwalk}</a></p>
+                                <p>Link: <a href={link} >{link}</a></p>
                             </Col>
                             <Col sm={4}>
-                                <Button className="mt-2 float-right" variant="secondary" onClick={ addVideoHandler }>Remove</Button>
+                                <Button className="mt-2 float-right" variant="secondary" onClick={ () => removeVideoHandler(video_Id, event_Id) }>Remove</Button>
                             </Col>
                             </Row>
                         </Col>
                     </Row>
                     ))
                     }
+                    <div style={{height:"12vh"}}></div>
                 </Container>
             </div>
+            <FloatActionButton/>
             </>
 }
 export default AddVideos;

@@ -9,3 +9,11 @@ content: "⚠ ";
 .services .form-control{
     width: 100%;
 }
+
+.err {
+    color: #ff0000e7;
+    }
+    
+.err::before {
+content: "⚠ ";
+}

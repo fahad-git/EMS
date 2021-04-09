@@ -1,7 +1,9 @@
 import React, {useState, useRef} from 'react';
+import { useHistory } from 'react-router-dom';
 import {Form, Container, Row, Button, Col, Modal} from 'react-bootstrap';
 import { Controller, useForm } from "react-hook-form";
-
+import { ToastContainer, toast } from 'react-toastify';
+import bcrypt from 'bcryptjs';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 import Terms from './BasicStructure/Terms';
@@ -9,12 +11,15 @@ import Terms from './BasicStructure/Terms';
 // CSS import goes here
 import './../assets/css/BaseComponents.css';
 import './../assets/css/FormStyles.css';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { CheckUsernameAvailability } from './API/Auth';
+
+import { CheckUsernameAvailability, RegisterUser } from './API/Auth';
 
 function Register(){
 
-    const { register, errors, watch, handleSubmit, control, setError, clearErrors } = useForm();
+    const history =  useHistory();
+    const { register, errors, watch, handleSubmit, control, setError } = useForm();
     const watchAllFields = watch();
     const [regModalOpen, toggleRegModelOpen] = useState(false);
     const password = useRef({});
@@ -23,12 +28,27 @@ function Register(){
     const onSubmit = async data => {
         // console.log(data)    ;
         data["name"] = data.firstName + " " + data.lastName;
+        data["userType"] = "User";
         delete data["firstName"];
         delete data["lastName"];
         delete data["check"];
         delete data["confirmPassword"];
-        console.log(data)
 
+        var salt = bcrypt.genSaltSync(10);
+        data.password = bcrypt.hashSync(data.password, salt);
+
+        console.log(data);
+        RegisterUser(data)
+        .then(res => {
+            toast("Register Successfully", {
+                type:"info",
+                });
+            // history.push("/home");
+        }).catch(err => {
+            toast("Registration failed", {
+                type:"info",
+                });
+        })
     }
 
     const termsHandler = () => {  
@@ -37,6 +57,18 @@ function Register(){
     
 
     return  <div>
+                <ToastContainer 
+                        position="top-center"
+                        autoClose={2000}
+                        hideProgressBar={true}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                    />
+
                 <Modal show={regModalOpen}
                     onHide = {()=> { toggleRegModelOpen(false)}}
                     size="md"
@@ -147,17 +179,22 @@ function Register(){
                                                                                                                     minLength:3,
                                                                                                                     pattern: /^[A-Z]+[A-Z0-9_]+[A-Z0-9]+$/i,
                                                                                                                     validate: value => {
-                                                                                                                        CheckUsernameAvailability(value)
+                                                                                                                         CheckUsernameAvailability(value)
                                                                                                                         .then(res => {
-                                                                                                                            if(res.data.success)
-                                                                                                                                return true
-                                                                                                                            else
-                                                                                                                                return false;
-
+                                                                                                                            if(!res.data.success)
+                                                                                                                                setError("username", {
+                                                                                                                                type: "validate",
+                                                                                                                                message: ""
+                                                                                                                              });
+                                                                                                                            return res.data.success;
                                                                                                                         }).catch(err => {
-                                                                                                                            console.log(err);
+                                                                                                                            setError("username", {
+                                                                                                                                type: "validate",
+                                                                                                                                message: ""
+                                                                                                                              });
                                                                                                                             return false;
                                                                                                                         })
+                                                                                                                        
                                                                                                                     }
                                                                                                                     })} />    
                                         {errors.username?.type === "validate" && <div className="error">{"Username is not available try another username"} </div> }

@@ -14,7 +14,7 @@ import Invoice from './Invoice';
 import { useHistory } from 'react-router-dom';
 
 // API Callings
-import { UpcomingEventsData } from './API/userAPIs';
+import { AllEventsData, UpcomingEventsData } from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
 
@@ -113,12 +113,15 @@ function Events(){
         }
     }
 
-    const selectedEventHandler = (name) => {
-        console.log(name)
+    const selectedEventHandler = (event_Id) => {
+        console.log(event_Id)
     }
   
     useEffect(() => {
-        UpcomingEventsData()
+
+        const api = (user) ? AllEventsData : UpcomingEventsData;
+
+        api()
         .then(res => {
             setAllEvents(res.data)
             setEvents(res.data)
@@ -201,25 +204,29 @@ function Events(){
                     </Row> 
                     <hr className="divider"/>   
                     {/* Here wil go dynamic UI */}
-                    {events.map( ({id, name, date, host, details}, index) => {
+                    {events.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"events"+index}>
                                 <Row key={"events-container"+index} className="event-items"  style={styles.container}>
-                                    <Col sm={12} md={10} onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                    <Col sm={12} md={10} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
                                         <Row>
-                                        <Col sm={4} style={styles.heading}>{name} </Col>
-                                        <Col sm={6} style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                        <Col sm={4} style={styles.heading}>{event_name} </Col>
+                                        <Col sm={6} style={styles.record}>Date & Time: {( new Date(start_date) ).toString()}</Col>
                                         </Row>
                                         <Row>
-                                        <Col sm={4} style={styles.record}>Organizier: {host} </Col>
-                                        <Col sm={6} style={styles.record}>Details: {details} </Col>
+                                        <Col sm={4} style={styles.record}>Organizier: {host_name} </Col>
+                                        <Col sm={6} style={styles.record}>type: {type} </Col>
                                         </Row>
                                     </Col>
+
+                                    { ( new Date(start_date) ) > Date.now() ? 
                                     <Col sm={12} md={2}>
                                         <Row>
-                                            <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={ () => detailsHandler(id)} style={styles.btn} variant="secondary">Details</Button></Col>                                    
-                                            <Col sm={6} md={12} style={styles.record}><Button onClick={ () => buyTicketHandler(id) } style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
+                                            <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={ () => detailsHandler(event_Id)} style={styles.btn} variant="secondary">Details</Button></Col>                                    
+                                            <Col sm={6} md={12} style={styles.record}><Button onClick={ () => buyTicketHandler(event_Id) } style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
                                         </Row>
                                     </Col>
+                                    : ""}
+
                                 </Row> 
                                 <hr className="divider"/>
                                 </div>

@@ -70,11 +70,9 @@ function OrganizingEvents(){
     const [allEvents, setAllEvents] = useState([]);
 
     const [content, setContent] = useState();
-
     const [searchQuery, setSearchQuery] = useState("");
 
     const searchHandler = () => {
-
         if(searchQuery.trim() === "")
             {
                 setOrganizingEvents(allEvents);
@@ -86,7 +84,6 @@ function OrganizingEvents(){
                 setOrganizingEvents(eventList)
     }
 
-
     const organizeEventHandler = () => {
         let cont = {
             header:"Organize Event",
@@ -97,9 +94,8 @@ function OrganizingEvents(){
         toggleModelOpen(true);
     }
 
-    
-    const selectedEventHandler = (name) => {
-        console.log(name)
+    const selectedEventHandler = (eventId) => {
+        console.log(eventId)
     }
 
     useEffect(() => {
@@ -181,21 +177,21 @@ function OrganizingEvents(){
 
                 <Container>
                     <Row style={styles.container}>
-                        <Col style={styles.title}>Upcoming Events</Col>
+                        <Col style={styles.title}>Organizing Events</Col>
                     </Row> 
                     <hr className="divider"/>   
                     {/* Here wil go dynamic UI */}
-                    {organizingEvents.map( ({name, date, host, details}, index) => {
+                    {organizingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"events"+index}>
                                 <Row key={"events-container"+index} className="event-items" style={styles.container}>
-                                    <Col onClick={ () => selectedEventHandler(name)} style={styles.eventSelection}>
+                                    <Col onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
                                         <Row>
-                                        <Col sm={5} style={styles.heading}>{name} </Col>
-                                        <Col sm={7} style={styles.record}>Date & Time: {date} 10 pm</Col>
+                                        <Col sm={5} style={styles.heading}>{event_name} </Col>
+                                        <Col sm={7} style={styles.record}>Date & Time: { (new Date(start_date)).toString() }</Col>
                                         </Row>
                                         <Row>
-                                        <Col sm={5} style={styles.record}>Organizier: {host} </Col>
-                                        <Col sm={7} style={styles.record}>Details: {details} </Col>
+                                        <Col sm={5} style={styles.record}>Organizier: {host_name} </Col>
+                                        <Col sm={7} style={styles.record}>Type: {type} </Col>
                                         </Row>
                                     </Col>
                                 </Row>

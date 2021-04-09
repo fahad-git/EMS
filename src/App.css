@@ -41,7 +41,7 @@ body {
   background-size: contain;
   min-height: 10vh;
   position: relative !important;
-
+  
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
