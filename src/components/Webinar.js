@@ -13,14 +13,18 @@ import AddWebinarForm from "./AddWebinarForm";
 import FloatActionButton from './FloatActionButton';
 
 import { RefreshToken } from './API/Auth';
-import { EventWebinarById, RemoveWebinarFromEvent } from './API/userAPIs';
+import { EventWebinarById, RemoveWebinarFromEvent, EventOptions } from './API/userAPIs';
 
 
 const styles = {
     container:{
         textAlign:"left",
         padding:"0px 50px"
-    }
+    },
+    header: {
+      
+        textAlign:"center"
+    },
 }
 
 function Webinar() {
@@ -28,6 +32,11 @@ function Webinar() {
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [isBaseHeader, toggleHeader] = useHeaderContext();
     const [user, setUser] = useUserContext();
+
+
+    const [isOrganizer, setIsOrganizer] = useState(0);
+
+    const [screenName, setScreenName] = useState("");
 
     const [content, setContent] = useState();
     const history = useHistory()
@@ -161,6 +170,45 @@ function Webinar() {
             }
         });
 
+        EventOptions(ID)
+        .then(res => {
+            setScreenName(res.data[0][0].links)
+            setIsOrganizer(res.data[1][0].organizer);
+        }).catch(err => {
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
+        });
+
+
     }, [modalOpen])
     
 
@@ -168,11 +216,18 @@ function Webinar() {
             {    modalOpen ? <DynamicModal content={content} /> : <></> }
             <div className="dashboard">
                 <Container style={styles.container}>
-                    <Row>
+                    <Row style={styles.header} className="mb-4">
                         <Col>
-                            <Button className="mb-5 float-right" variant="secondary" onClick={ addWebinarHandler }>ADD Webinar</Button>
+                            <h1> <u>{screenName}</u> </h1>
+                        </Col>  
+                    </Row>
+                    <Row>
+                        <Col style={{display: (isOrganizer) ? "block" : "none" }}>
+                                <Button className="mb-5 float-right" variant="secondary" onClick={ addWebinarHandler }>ADD Webinar</Button>
                         </Col>
                     </Row>
+
+                    <hr/>
                     {
                     webinars.map( ({link_Id, event_Id, title, description, type, date, duration, link, status, platform}, index) => (
                     <Row key={index} className="mb-5">
@@ -197,7 +252,7 @@ function Webinar() {
                             <Col sm={8} >
                                 <p>Link: <a href={link} >{link}</a></p>
                             </Col>
-                            <Col sm={4}>
+                            <Col sm={4} style={{display: (isOrganizer) ? "block" : "none" }}>
                                 <Button className="mt-2 float-right" variant="secondary" onClick={ () => removeWebinarHandler(link_Id, event_Id) }>Remove</Button>
                             </Col>
                             </Row>

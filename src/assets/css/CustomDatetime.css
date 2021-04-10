@@ -1,0 +1,10 @@
+.selected{
+    background-color: #6c757d !important;
+}
+thead{
+    background-color: #6c757d !important;
+    color: white !important;
+}
+th{
+    color: white !important;
+}

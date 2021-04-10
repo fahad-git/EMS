@@ -13,7 +13,7 @@ import './../assets/css/EventManagement.css';
 import { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 
 // APIs
-import { EventDetailsByID, RequestForStall } from './API/userAPIs';
+import { EventDetailsByID, RequestForStall, StallCategories } from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
 
@@ -38,6 +38,8 @@ function EventDetails(props){
 
     const [requestFormDisplay, setRequestFormDisplay] = useState("none");
 
+    var [categories, setCategories] = useState([]);
+
     const styles = {
         request:{
             display:requestFormDisplay
@@ -52,12 +54,14 @@ function EventDetails(props){
     }
     
     const onSubmit = data => {
+        data["event_Id"] = ID;
         console.log(data);
         
         RequestForStall(data)
         .then(res => {
             setLockFields(true);
             toast("Proposal submitted successfully please wait for admin to approve", { type:"info",});
+            window.location.reload();
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){
@@ -136,7 +140,15 @@ function EventDetails(props){
                     history.push("/");
                 })
             }
+        });
+        StallCategories()
+        .then(res => {
+            setCategories(res.data);
+        }).catch(err => {
+            console.log();
         })
+
+
     }, [])
 
     return  <>
@@ -145,7 +157,7 @@ function EventDetails(props){
                         <Form.Group as={Row} controlId="formBasicEventName">
                             <Col sm={{span:8, offset:2}}>
                                 <Form.Label>Event Name:</Form.Label>
-                                <Form.Control disabled={true} name="name" type="text" placeholder="Event Name" value = {eventData? eventData.event_name : ""}/>
+                                <Form.Control disabled={true} name="eventName" type="text" placeholder="Event Name" value = {eventData? eventData.event_name : ""}/>
                             </Col>
                         </Form.Group>
 
@@ -159,7 +171,7 @@ function EventDetails(props){
                         <Form.Group as={Row} controlId="formBasicEventType">
                             <Col sm={{span:8, offset:2}}>
                                 <Form.Label>Event Type:</Form.Label>
-                                <Form.Control disabled={true} name="eventHost" type="text" placeholder="Event Type" value={eventData? eventData.type : ""} />
+                                <Form.Control disabled={true} name="eventType" type="text" placeholder="Event Type" value={eventData? eventData.type : ""} />
                             </Col>
                         </Form.Group>
 
@@ -211,45 +223,71 @@ function EventDetails(props){
                         <Form.Group as={Row} controlId="formBasicEventOwnerName">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} name="ownerName" type="text" placeholder="Owner Name" ref={register({required: true, minLength:3})} />
-                                {errors.ownerName?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
-                                {errors.ownerName?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+                                <Form.Control disabled = {lockFields} name="owner_name" type="text" placeholder="Owner Name" ref={register({required: true, minLength:3})} />
+                                {errors.owner_name?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.owner_name?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="formBasicStallName">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} name="stallName" type="text" placeholder="Stall Name" ref={register({required: true, minLength:3})} />
-                                {errors.stallName?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
-                                {errors.stallName?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+                                <Form.Control disabled = {lockFields} name="name" type="text" placeholder="Stall Name" ref={register({required: true, minLength:3})} />
+                                {errors.name?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.name?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="formBasicCategory">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} name="category" type="text" placeholder="Category" ref={register({required: true, minLength:3})} />
+                            <Form.Control as="select" disabled = {lockFields}  name="category" ref={register({required: true})} custom>
+                                <option value="">Category</option>
+                                {
+                                    categories.map(({cat_id, type, name}, index) => (
+                                        <option key = {index} >{name}</option>
+                                    ))
+                                }
+                            </Form.Control>
+                                {/* <Form.Control disabled = {lockFields} name="category" type="text" placeholder="Category" ref={register({required: true, minLength:3})} /> */}
                                 {errors.category?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
-                                {errors.category?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} controlId="formBasicStallSlogan">
+                            {/* <Form.Label>Password</Form.Label> */}
+                            <Col sm={{span:8, offset:2}}>
+                                <Form.Control disabled = {lockFields} name="slogan" type="text" placeholder="Stall Slogan" ref={register({required: true, minLength:3})} />
+                                {errors.slogan?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.slogan?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} controlId="formBasicStallDetails">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} as="textarea" rows={3} name="stallDescription" type="text" placeholder="Stall Description" ref={register({required: true, minLength:3})} />
-                                {errors.stallDescription?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
-                                {errors.stallDescription?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+                                <Form.Control disabled = {lockFields} as="textarea" rows={3} name="description" type="text" placeholder="Stall Description" ref={register({required: true, minLength:3})} />
+                                {errors.description?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.description?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} controlId="formBasicPurpose">
+                        <Form.Group as={Row} controlId="formBasicAboutUs">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} as="textarea" rows={3} name="purpose" type="text" placeholder="Purpose" ref={register({required: true, minLength:3})} />
-                                {errors.purpose?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
-                                {errors.purpose?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+                                <Form.Control disabled = {lockFields} as="textarea" rows={3} name="about_us" type="text" placeholder="About Us" ref={register({required: true, minLength:3})} />
+                                {errors.about_us?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.about_us?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
+
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} controlId="formBasicLogoImage">
+                            {/* <Form.Label>Password</Form.Label> */}
+                            <Col sm={{span:8, offset:2}}>
+                                <Form.Control disabled = {lockFields} name="logoImage" type="text" placeholder="Logo Image" ref={register({required: true, minLength:3})} />
+                                {errors.logoImage?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
+                                {errors.logoImage?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
 
                             </Col>
                         </Form.Group>

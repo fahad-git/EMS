@@ -3,11 +3,16 @@ import { useHistory} from 'react-router-dom';
 import { Container, Form,Row, Col, Button } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 
-import 'rc-datepicker/lib/style.css';
+import 'rc-datetime-picker/dist/picker.css';
+import 'rc-datetime-picker/dist/picker.min.css';
+import './../assets/css/CustomDatetime.css';
+
+// import 'rc-datepicker/lib/style.css';
 import './../assets/css/FormStyles.css';
 import { ToastContainer, toast } from 'react-toastify';
-import {DatePickerInput } from 'rc-datepicker';
-import {DatetimePicker} from 'rc-datetime-picker';
+// import {DatePickerInput } from 'rc-datepicker';
+import {DatetimePickerTrigger} from 'rc-datetime-picker';
+import moment from 'moment';
 import { AddWebinarInEvent } from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
@@ -24,7 +29,17 @@ function AddWebinarForm() {
 
     const history = useHistory();
 
+    var [moments, setMoment] = useState(moment());
+    const shortcuts = {
+        'Today': moment(),
+        'Yesterday': moment().subtract(1, 'days'),
+      };
+    const handleChange = (moment) => {
+        setMoment(moment);
+      }
     const onSubmit = data => {
+
+        console.log(data)
 
         var arr = history.location.pathname.split("/");
         console.log(arr)
@@ -43,6 +58,7 @@ function AddWebinarForm() {
 
         data["event_Id"] = ID;
         data["status"] = "Active";
+        console.log(data)
         AddWebinarInEvent(data)
         .then(res => {
             console.log(res.data);
@@ -116,8 +132,24 @@ function AddWebinarForm() {
                             {errors.type?.type === "minLength" && <div className="err">{"Your input is less than minimum length"} </div> }                                                     
                         </Col>
                     </Form.Group>
+                   
+                    <Form.Group as={Row} controlId="formBasicDate">
+                        <Col sm={{span:8, offset:2}}>
+                            <DatetimePickerTrigger
+                                shortcuts={shortcuts} 
+                                moment={moments}
+                                onChange={handleChange}>
+                                <Form.Control disabled={disableFields} className="col-9 col-sm-10 float-left" name="date" type="text" value={moments?.format('YYYY-MM-DD HH:mm:ss')} placeholder="Date and time" ref={register({required: true, minLength:3})} readOnly />
+                                <Button variant="outline-secondary" className="col-3 col-sm-2 form-control">
+                                    <i class="large material-icons">date_range</i>
+                                </Button>                                
+                                {errors.date?.type === "required" && <div className="err">{"This field is mandatory."} </div> }
+                                {errors.date?.type === "minLength" && <div className="err">{"Your input is less than minimum length"} </div> }                                                     
+                            </DatetimePickerTrigger>
+                        </Col>
+                        </Form.Group>
 
-                    <Form.Group as={Row} controlId="formBasicWebinarDate">
+                    {/* <Form.Group as={Row} controlId="formBasicWebinarDate">
                         <Col sm={{span:8, offset:2}}>
                             <Controller
                             name="date"
@@ -127,8 +159,9 @@ function AddWebinarForm() {
                             defaultValue=""
 
                             render={({ name, onBlur, onChange, value }) => (
-                            <DatetimePicker 
+                            <DatetimePicker
                                 disabled={disableFields}
+                                moment={moment()}
                                 name={name}
                                 onBlur={onBlur}
                                 onChange={onChange}
@@ -143,7 +176,7 @@ function AddWebinarForm() {
                             {errors.date?.type === "required" && <div className="err">{"This field is mandatory."} </div> }
                             {errors.date?.type === "minLength" && <div className="err">{"Write you number in complete format"} </div> }                             
                         </Col>
-                    </Form.Group>
+                    </Form.Group> */}
 
                     <Form.Group as={Row} controlId="formBasicDuration">
                         <Col sm={{span:8, offset:2}}>

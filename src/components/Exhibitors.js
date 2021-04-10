@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { Container, Row, Col, Image, Button,Nav } from 'react-bootstrap'
+import { Container, Row, Col, Image, Button, Collapse, Navbar } from 'react-bootstrap'
 import stall from './../assets/images/stall.png';
 import FloatActionButton from './FloatActionButton';
 import DynamicModal from './DynamicModal';
@@ -14,11 +14,32 @@ import MyContext, { useModalContext,  useHeaderContext, useUserContext } from '.
 
 // APIs goes here
 import { RefreshToken } from './API/Auth';
-import { EventOptions } from './API/userAPIs';
+import { EventOptions, StallCategories, EventStallsById } from './API/userAPIs';
 
 
 const exhibitors = [{
     "name": "Exhibitor 1",
+    "img":stall
+},{
+    "name": "Exhibitor 2",
+    "img":stall
+},{
+    "name": "Exhibitor 3",
+    "img":stall
+},{
+    "name": "Exhibitor 4",
+    "img":stall
+},{
+    "name": "Exhibitor 5",
+    "img":stall
+},{
+    "name": "Exhibitor 6",
+    "img":stall
+},{
+    "name": "Exhibitor 7",
+    "img":stall
+},{
+    "name": "Exhibitor 8",
     "img":stall
 },{
     "name": "Exhibitor 2",
@@ -63,6 +84,16 @@ const styles = {
     sidebar:{
         textAlign:"left",
         color:"white"
+    },
+    cat:{
+        textAlign:"left",
+        color:"white",
+        cursor:"pointer",
+        outline:"none"
+    },
+    overflow:{
+        overflowY:"scroll",
+        minHeight:"100%"
     }
 }
 
@@ -72,9 +103,19 @@ function Exhibitors(){
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [content, setContent] = useState();
     const [user, setUser] = useUserContext();
-    const [userRole, setUserRole] = useState();
     const [header, toggleHeader] = useHeaderContext();
 
+    var [isOrganizer, setIsOrganizer] = useState(0);
+    var [screenName, setScreenName] = useState("");
+    var [stalls, setStalls] = useState([]);
+    var [selectedCategory, setSelectedCategory] = useState("All");
+    var [categories, setCategories] = useState([]);
+    var [showCollapseButton, setShowCollapseButton] = useState(true)
+
+    const [dimensions, setDimensions] = useState({ 
+        height: window.innerHeight,
+        width: window.innerWidth
+      })
 
     const addStallHandler = () => {
         let cont = {
@@ -83,7 +124,7 @@ function Exhibitors(){
             footer:""
           }
         setContent(cont);
-        toggleModelOpen(true);
+        toggleModelOpen(false);
         
     }    
 
@@ -91,8 +132,33 @@ function Exhibitors(){
         history.push(history.location.pathname + "/exhibitor-stall");
     }
 
-    useEffect(() => {
+    const categoryHandler = (name) => {
+        console.log(name);
+        setSelectedCategory(name);
+    }
 
+    useEffect(
+    function handleResize() {
+        setDimensions({
+          height: window.innerHeight,
+          width: window.innerWidth
+        })
+        if(window.innerWidth < 400)
+            setShowCollapseButton(false);
+        else            
+            setShowCollapseButton(true);
+        
+            window.addEventListener('resize', handleResize)
+
+
+            return _ => {
+                window.removeEventListener('resize', handleResize)
+              }
+
+    },[])
+  
+  
+    useEffect(() => {
         var arr = history.location.pathname.split("/");
         console.log(arr)
     
@@ -111,7 +177,8 @@ function Exhibitors(){
 
         EventOptions(ID)
         .then(res => {
-            setUserRole(res.data.role);
+            setScreenName(res.data[0][0].stalls)
+            setIsOrganizer(res.data[1][0].organizer);
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){
@@ -146,16 +213,48 @@ function Exhibitors(){
             }
         });
 
+        StallCategories()
+        .then(res => {
+            setCategories(res.data);
+        }).catch(err => {
+            console.log();
+        })
+
+        EventStallsById(ID)
+        .then(res => {
+            setStalls(res.data);
+        }).catch(err => {
+            console.log();
+        })
     }, [])
 
 
     return  <>
                 {modalOpen?  <DynamicModal content={content} />: ''}
-            <hr/>
-                <Row style={styles.main}>
-                    <Col sm="3" className="sidebar">
-                        <h3 style={styles.sidebar}>Exhibitors</h3>
-                        <hr />
+                <hr/>
+                <Button variant="outline-secondary" onClick={ ()=> setShowCollapseButton(!showCollapseButton)} style={{display: showCollapseButton && window.innerWidth >400? "none" : "block"}} className="float-left"> <i className="material-icons">dashboard</i></Button>
+                <Row style={styles.main}>                
+                <Collapse in={showCollapseButton}  id="responsive-navbar-nav">
+                    <Col sm="3" className="sidebar" style={styles.overflow}>
+                        <h3 style={styles.sidebar} className="ml-2">{screenName}</h3>
+                         <hr className="divider my-4"/>
+                            <Row>
+                                <Col className="ml-2" style={styles.align}>
+                                <Button variant="link" onClick={() => categoryHandler("All")} style={styles.cat}>ALL</Button>
+                                <hr/>
+                                </Col>
+                            </Row>
+                            {
+                            categories.map(({cat_id, type, name, index}) => (
+                                <Row key={name + "-" +index}>
+                                    <Col className="ml-2" style={styles.align}>
+                                    <Button variant="link" onClick={() => categoryHandler(name)} style={styles.cat}>{name}</Button>
+                                    <hr/>
+                                    </Col>
+                                </Row>
+                            ))
+                            }
+                         {/*
                         <Nav.Link style={styles.align} className="sidebar-item ml-4" href="#aboutUs">Daily Wear</Nav.Link>
                         <hr />
                         <Nav.Link style={styles.align} className="sidebar-item ml-4" href="#contactUs">Holiday Dresses</Nav.Link>
@@ -166,25 +265,28 @@ function Exhibitors(){
                         <hr />
                         <Nav.Link style={styles.align} className="sidebar-item ml-4" href="#login" >Exhibitors</Nav.Link>
                         <hr />
-                        <Nav.Link style={styles.align} className="sidebar-item ml-4" href="#login" >Weddings</Nav.Link>
+                        <Nav.Link style={styles.align} className="sidebar-item ml-4" href="#login" >Weddings</Nav.Link> */}
                     </Col>
+                    </Collapse>
                     <Col sm="9"> 
                         <Container>       
                             <Row>
                                 <Col>
-                                    <h2 className='float-left' style={styles.align}>Daily Wear</h2>
-                                    <Button className='float-right'  style={{display: (userRole === "attendee") ? "none":"block" }} onClick={addStallHandler} variant='secondary'>
+                                    <h2 className='float-left' style={styles.align}>{selectedCategory}</h2>
+                                    <Button className='float-right'  style={{display: isOrganizer? "block":"none" }} onClick={addStallHandler} variant='secondary'>
                                         Add Stall
                                     </Button>
                                 </Col>
                             </Row>
                             <hr/>
                             <Row>
-                                {exhibitors.map(({name, img}, index)=>(
-                                    <Col key={index} onClick={exhibitorStallHandler} className="mb-5 mx-4" style={styles.stallContainer}>
-                                        <Image src={img} style={styles.stall}/>
+                                {stalls.map(({stall_id, event_id, name, description, category, slogan, logoImg, owner_name, about_us, status}, index)=>(
+                                    <Col key={index} onClick={exhibitorStallHandler} className="mb-5 mx-4 col-4" style={styles.stallContainer}>
+                                        <center>
+                                        <Image src={stall} style={styles.stall}/>
                                         <p>{name}</p>
-                                        <Button className="ml-5" style={{display: (userRole === "attendee") ? "none":"block" , fontSize:"10px"}} variant="secondary">Remove</Button>
+                                        <Button style={{display: isOrganizer ? "block":"none" , fontSize:"10px"}} variant="secondary">Remove</Button>
+                                        </center>
                                     </Col>         
                                 ))}
                             </Row>
