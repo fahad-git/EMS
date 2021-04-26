@@ -12,6 +12,7 @@ import ImageDemoTile from './ImageDemoTile';
 import NavbarFooter from "../HeadersAndFooters/NavbarFooter"
 import {imgs, vids} from '../../assets/content/SliderContent';
 import Events from './../Events';
+import { render } from '@testing-library/react';
 
 function Home(){
 
@@ -33,19 +34,21 @@ function Home(){
         history.push("/register");
     }
 
+
+
     return <ReactFullpage
         scrollOverflow={true}
         allowScrolling={true}
         autoScrolling= {true}
+        scrollBar = {false}
         verticalCentered={true}
         lockAnchors = {true}
-        scrollBar = {true}
         dragAndMove = {true}
         fadingEffect = {true}
         slidesNavigation = {true}
         fitToSection= {true}
         loopBottom= {true}
-        licenseKey = {''}
+        licenseKey = 'CZ5PJ-C3ULH-UWR94-5N9HG-JMT9V'
         sectionsColor={[]}
         anchors = {["", "gallery", "events", "watchDemo", "support"]}
         onLeave={onLeave}
@@ -67,7 +70,7 @@ function Home(){
                 </div>
                 <div className="section">
                     {imgs.map((img, index) => (
-                        <ImageDemoTile key = {index} img={img}/>
+                       <ImageDemoTile key = {index} img={img}/>
                     ))}
                 </div>
                 <div className="section">
@@ -75,7 +78,7 @@ function Home(){
                 </div>
                 <div className="section">
                     {vids.map((vid, index) => (
-                        <VideoDemoTile key={index} vid={vid}/>  
+                      <VideoDemoTile key={index} vid={vid}/>  
                     ))}
                 </div>
                 <div className="section">

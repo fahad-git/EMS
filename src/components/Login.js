@@ -54,10 +54,10 @@ function Login(){
                 })
             }
         }).catch((err) => {
-            // console.log(err.response.data);
+            console.log(err);
             setError({
                 display:"block",
-                msg:err.response.data.message
+                msg:err?.response?.data?.message
             })
         })
 

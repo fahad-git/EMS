@@ -68,14 +68,13 @@ function Events(){
     const [searchQuery, setSearchQuery] = useState("");
 
     const searchHandler = () => {
-
         if(searchQuery.trim() === "")
-            {
+        {
                 setEvents(allEvents);
-            }
+        }
         let eventList = []
         for(let tmp of allEvents)
-            if(tmp.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            if(tmp.event_name.toLowerCase().includes(searchQuery.toLowerCase()))
                 eventList.push(tmp)
         setEvents(eventList)
     }
@@ -96,16 +95,16 @@ function Events(){
         }
     }
 
-    const buyTicketHandler = () => {
+    const buyTicketHandler = (id) => {
         if(!user){
             toast("You must login first", {
-
                 type:"info",
                 });
+                return;
         }else {
             let cont = {
                 header:"Buy Ticket",
-                component:<Invoice/>,
+                component:<Invoice id = {id}/>,
                 footer:""
             }
             setContent(cont);
@@ -118,7 +117,6 @@ function Events(){
     }
   
     useEffect(() => {
-
         const api = (user) ? AllEventsData : UpcomingEventsData;
 
         api()
@@ -170,6 +168,8 @@ function Events(){
     return  <>
             {renderModalHandler()}
 
+            <Button variant onClick={() => {toast("You must login first")} }></Button>
+
             <ToastContainer 
                 position="top-center"
                 autoClose={2000}
@@ -181,7 +181,6 @@ function Events(){
                 draggable
                 pauseOnHover
             />
-
             <div className="dashboard">
                 <Container>
                     <Row>
@@ -206,6 +205,7 @@ function Events(){
                     {/* Here wil go dynamic UI */}
                     {events.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"events"+index}>
+                            { ( new Date(start_date) ) > Date.now() ? 
                                 <Row key={"events-container"+index} className="event-items"  style={styles.container}>
                                     <Col sm={12} md={10} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
                                         <Row>
@@ -218,17 +218,15 @@ function Events(){
                                         </Row>
                                     </Col>
 
-                                    { ( new Date(start_date) ) > Date.now() ? 
                                     <Col sm={12} md={2}>
                                         <Row>
                                             <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={ () => detailsHandler(event_Id)} style={styles.btn} variant="secondary">Details</Button></Col>                                    
                                             <Col sm={6} md={12} style={styles.record}><Button onClick={ () => buyTicketHandler(event_Id) } style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
                                         </Row>
                                     </Col>
-                                    : ""}
-
                                 </Row> 
-                                <hr className="divider"/>
+                                : "" }
+                                { ( new Date(start_date) ) > Date.now() ? <hr className="divider"/> : "" }
                                 </div>
                     })}
                 </Container>

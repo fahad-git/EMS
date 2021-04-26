@@ -69,7 +69,7 @@ export function EventDetailsByID(ID){
             token = user.token;
         const AuthorizationHeader = { "Authorization": "Bearer " + token }
         
-        return axios.get(Base_URL + '/events/user/' + ID, { headers:AuthorizationHeader })
+        return axios.get(Base_URL + '/events/details/' + ID, { headers:AuthorizationHeader })
   
     }).catch(err => {
         return new Promise((resolve, reject) => {
@@ -334,5 +334,23 @@ export function EventCategories(){
     } );
 }
 
+
+export function ChangeNames(id, data){
+    return CheckTokenExpiry()
+    .then(res => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.put(Base_URL + '/events/user/options/' + id, data, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+}
 
 export default null;

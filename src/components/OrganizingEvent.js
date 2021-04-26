@@ -79,7 +79,7 @@ function OrganizingEvents(){
             }
         let eventList = []
         for(let tmp of allEvents)
-            if(tmp.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            if(tmp.event_name.toLowerCase().includes(searchQuery.toLowerCase()))
                 eventList.push(tmp)
                 setOrganizingEvents(eventList)
     }

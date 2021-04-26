@@ -19,7 +19,6 @@ import { RefreshToken } from './API/Auth';
 
 //custome Hooks
 function EventDetails(props){
-
     const ID = props.id;
 
     // var today = new Date();
@@ -105,6 +104,7 @@ function EventDetails(props){
     useEffect(() => {
         EventDetailsByID(ID)
         .then(res => {
+            console.log(res.data[0])
             setEventData(res.data[0]);
         }).catch(err => {
             console.log(err)

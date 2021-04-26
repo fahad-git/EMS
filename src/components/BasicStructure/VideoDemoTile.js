@@ -9,16 +9,14 @@ function VideoDemoTile(props){
     const vid = props.vid;
 
     return  <div className="services">
-
                 <Carousel>
                     <Carousel.Item>
-                       
-                    <iframe title={vid.title} 
+                        <iframe title={vid.title} 
                             style = {{width:"90%", height:"80vh"}}
                             src={vid.src} 
                             frameBorder="0" 
                             allowFullScreen>
-                            </iframe>
+                        </iframe>
                           
                         {/* <Carousel.Caption>
                             <h3>{vid.title}</h3>

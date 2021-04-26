@@ -7,7 +7,8 @@ import FloatActionButton from './FloatActionButton';
 import ImageMapper from 'react-image-mapper';
 import IMAGE_URL from './../assets/images/main-lobby.jpg'
 import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
-
+import DynamicModal from './DynamicModal';
+import ChangIconNames from './ChangeIconNames';
 
 // APIs goes here
 import { RefreshToken } from './API/Auth';
@@ -61,6 +62,7 @@ function MainLobby(){
     const [modalOpen, toggleModelOpen] = useModalContext();
     const [isBaseHeader, toggleHeader] = useHeaderContext();
     const [user, setUser] = useUserContext();
+    const [content, setContent] = useState();
 
     var [isOrganizer, toggleIsOrganizer] = useState(false);
 
@@ -90,6 +92,15 @@ function MainLobby(){
         history.push("/main-lobby/" + ID + "/user-management");
     }
 
+    const changeIconNamesHandler = () => {
+        let cont = {
+            header:"Change Names",
+            component:<ChangIconNames id = {ID}/>,
+            footer:""
+        }
+        setContent(cont);
+        toggleModelOpen(true);
+    }
 
     useEffect(() => {
 
@@ -131,7 +142,7 @@ function MainLobby(){
             }
         });
 
-    }, [])
+    }, [modalOpen])
 
     return  <>            
                 <ToastContainer 
@@ -145,6 +156,9 @@ function MainLobby(){
                     draggable
                     pauseOnHover
                 />
+
+                {modalOpen ? <DynamicModal content={content} /> : <></> }
+
 
                 <div className="main-lobby">
                     <Container fluid style={{position: 'absolute', top: 100}}>
@@ -163,7 +177,8 @@ function MainLobby(){
                             <center>
                             <Button onClick={userManagementHandler} style={styles.userBtn} variant="outline-light">User Management</Button>
                             </center>
-                        </Col>                     
+                        </Col>       
+
                         <Col>
                             <center>
                             <Button onClick={exhibitorsHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.stalls? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.stalls?eventOptions.stalls:"" } </Button>
@@ -174,6 +189,14 @@ function MainLobby(){
                             <Button onClick={webinarHandler} style={{...styles.btn, ...{display: eventOptions && eventOptions.links? "block": "none"} }} variant="outline-light">{eventOptions && eventOptions.links?eventOptions.links:"" } </Button>
                             </center>
                         </Col>
+                    </Row>
+                    <br/><br/><br/><br/>
+                    <Row className="mt-5">
+                        <Col style={{display: (isOrganizer) ? "block" : "none" }}>
+                            <center>
+                            <Button onClick={changeIconNamesHandler} style={styles.userBtn} variant="outline-light">Change Icon Names</Button>
+                            </center>
+                        </Col> 
                     </Row>
                     </Container>
                 </div>   

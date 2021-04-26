@@ -81,6 +81,7 @@ function DashboardUser(){
     useEffect(()=>{
         UserDashboardData()
         .then(res=>{
+            console.log(res.data)
             setTotalOrganizingEvents(res.data.totalOrganizeEvents);
             setTotalAttendingEvents(res.data.totalAttendingEvents);
             setTotalUpcomingEvents(res.data.totalUpcomingEvents);
@@ -146,25 +147,25 @@ function DashboardUser(){
                 <Container>
                     <Row style={styles.circles} className="justify-content-center">
                         <Col xs={4} md>
-                            <Button className="circular-progress">
+                            <Button className="circular-progress" href="#upcoming" >
                                 <h3> {totalUpcomingEvents} </h3>
                             </Button>
                             <p>Upcoming Events</p>
                         </Col>
                         <Col xs={4} md>
-                            <Button className="circular-progress">
+                            <Button className="circular-progress" href="#attending">
                                 <h3> {totalAttendingEvents} </h3>
                             </Button>
                             <p>Attending Events</p>
                         </Col>
                         <Col xs={4} md>
-                            <Button className="circular-progress">
+                            <Button className="circular-progress" href="#organizing">
                             <h3> {totalOrganizingEvents} </h3>
                             </Button>
                             <p>Organizing Events</p>                            
                         </Col>
                         <Col xs={4} md>
-                            <Button className="circular-progress">
+                            <Button className="circular-progress" href="#stalls">
                                 <h3> {totalStalls} </h3>
                             </Button>
                             <p>Total Stalls</p>
@@ -177,15 +178,15 @@ function DashboardUser(){
                         <Col style={styles.title}>Notifications</Col>
                     </Row> 
                     <hr className="divider"/>   
-                    {notification.map( ({event, details}, index) => {
-                    return <div key={"notification" + index}>
+                    {notification.map( ({event_Id, date, message,status, title, notification_Id, user_Id}, index) => {
+                    return <div key={"notification" + index}>                      
                                 <Row key={"notification-container" + index} style={styles.container}>
                                     <Col className="event-items">
                                         <Row>
-                                            <Col style={styles.heading}>Event: {event} </Col>
+                                            <Col style={styles.heading}>Event: {title} </Col>
                                         </Row>
                                         <Row>
-                                            <Col style={styles.record}>Details: {details} </Col>
+                                            <Col style={styles.record}>Details: {message} </Col>
                                         </Row>
                                     </Col>
                                 </Row>  
@@ -195,7 +196,7 @@ function DashboardUser(){
     
                 </Container>
 
-                <Container>
+                <Container id="attending">
                     <Row style={styles.container}>
                         <Col style={styles.title}>Attending Events</Col>
                     </Row> 
@@ -219,7 +220,7 @@ function DashboardUser(){
                     })}
                 </Container>
 
-                <Container>
+                <Container id="organizing">
                     <Row style={styles.container}>
                         <Col style={styles.title}>Organizing Events</Col>
                     </Row> 
@@ -243,7 +244,7 @@ function DashboardUser(){
                                                                 
                     })}
                 </Container>
-                <Container>
+                <Container id="stalls">
                     <Row style={styles.container}>
                         <Col style={styles.title}>My Stalls</Col>
                     </Row> 
@@ -267,7 +268,7 @@ function DashboardUser(){
                                                                 
                     })}
                 </Container>
-                <Container>
+                <Container id="upcoming">
                     <Row style={styles.container}>
                         <Col style={styles.title}>Upcoming Events</Col>
                     </Row> 

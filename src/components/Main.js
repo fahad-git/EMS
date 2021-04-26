@@ -93,7 +93,7 @@ function Main(){
                     <Route path='/settings'> <Setting /> </Route>
                     <Route path='/user-dashboard'><DashboardUser /></Route>
                     <Route path='/organize-events'><OrganizeEvents /></Route>
-                    
+
                     <Redirect to="/home" />
                 </Switch>
             </>
