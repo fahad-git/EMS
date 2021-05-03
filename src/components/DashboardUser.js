@@ -10,34 +10,6 @@ import MyContext, { useModalContext,  useHeaderContext, useUserContext } from '.
 import {UpcomingEventsData, UserDashboardData} from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
-const styles = {
-    container:{
-        marginTop:20,
-        outline:5,
-        border:5
-    },
-    title:{
-        fontSize:"calc(6px + 3vmin)",
-        textAlign: "left",
-        marginTop:20,
-        fontWeight:"bold"
-    },
-    heading:{
-        fontSize:"calc(5px + 3vmin)",
-        textAlign:"left"
-    },
-    circles:{
-        marginBottom: 30
-    },
-    record:{
-        fontSize:"calc(3px + 2vmin)",
-        textAlign:"left"
-    },
-    eventSelection:{
-        cursor:"pointer"
-    }
-}
-
 function DashboardUser(){
     const history = useHistory();
 
@@ -58,6 +30,44 @@ function DashboardUser(){
     const [totalAttendingEvents, setTotalAttendingEvents] = useState();
     const [totalUpcomingEvents, setTotalUpcomingEvents] = useState();
     const [totalStalls, setTotalStalls] = useState();
+        
+    const styles = {
+        container:{
+            marginTop:20,
+            outline:5,
+            border:5
+        },
+        title:{
+            fontSize:"calc(6px + 3vmin)",
+            textAlign: "left",
+            marginTop:20,
+            fontWeight:"bold"
+        },
+        heading:{
+            fontSize:"calc(5px + 3vmin)",
+            textAlign:"left"
+        },
+        circles:{
+            marginBottom: 30
+        },
+        record:{
+            fontSize:"calc(3px + 2vmin)",
+            textAlign:"left"
+        },
+        eventSelection:{
+            cursor:"pointer"
+        },
+        attending:{
+            display: (totalAttendingEvents == 0) ? "none" : "block"
+        },
+        organizing:{
+            display: (totalOrganizingEvents == 0) ? "none" : "block"
+        },
+        stall:{
+            display: (totalStalls == 0) ? "none" : "block"
+        }
+    }
+
 
     const attendingEventHandler = (id) => {
         console.log("Row Clicked", id);
@@ -81,7 +91,7 @@ function DashboardUser(){
     useEffect(()=>{
         UserDashboardData()
         .then(res=>{
-            console.log(res.data)
+            // 
             setTotalOrganizingEvents(res.data.totalOrganizeEvents);
             setTotalAttendingEvents(res.data.totalAttendingEvents);
             setTotalUpcomingEvents(res.data.totalUpcomingEvents);
@@ -152,19 +162,19 @@ function DashboardUser(){
                             </Button>
                             <p>Upcoming Events</p>
                         </Col>
-                        <Col xs={4} md>
+                        <Col style={styles.attending} xs={4} md>
                             <Button className="circular-progress" href="#attending">
                                 <h3> {totalAttendingEvents} </h3>
                             </Button>
                             <p>Attending Events</p>
                         </Col>
-                        <Col xs={4} md>
+                        <Col style={styles.organizing} xs={4} md>
                             <Button className="circular-progress" href="#organizing">
                             <h3> {totalOrganizingEvents} </h3>
                             </Button>
                             <p>Organizing Events</p>                            
                         </Col>
-                        <Col xs={4} md>
+                        <Col style={styles.stall} xs={4} md>
                             <Button className="circular-progress" href="#stalls">
                                 <h3> {totalStalls} </h3>
                             </Button>
@@ -196,7 +206,7 @@ function DashboardUser(){
     
                 </Container>
 
-                <Container id="attending">
+                <Container id="attending" style={styles.attending}>
                     <Row style={styles.container}>
                         <Col style={styles.title}>Attending Events</Col>
                     </Row> 
@@ -220,7 +230,7 @@ function DashboardUser(){
                     })}
                 </Container>
 
-                <Container id="organizing">
+                <Container id="organizing" style={styles.organizing}>
                     <Row style={styles.container}>
                         <Col style={styles.title}>Organizing Events</Col>
                     </Row> 
@@ -244,7 +254,7 @@ function DashboardUser(){
                                                                 
                     })}
                 </Container>
-                <Container id="stalls">
+                <Container id="stalls" style={styles.stall}>
                     <Row style={styles.container}>
                         <Col style={styles.title}>My Stalls</Col>
                     </Row> 

@@ -1,0 +1,15 @@
+.carousel .event-items{
+    cursor: pointer;
+    transition: transform .4s;
+}
+/* 
+.carousel .event-items:hover{
+    transform: scale(1.2);
+    border-style: ridge;
+} */
+
+.event-item-selected{
+    cursor: pointer;
+    transform: scale(1.2);
+    border-style: ridge;
+}

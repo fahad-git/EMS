@@ -89,7 +89,7 @@ function Main(){
                     <Route exact path='/main-lobby/:ID/exhibitors'> <Exhibitors /> </Route>
                     <Route exact path='/main-lobby/:ID/webinar'> <Webinar /> </Route>
                     <Route exact path='/main-lobby/:ID/help-desk'> <HelpDesk /> </Route>
-                    <Route exact path='/main-lobby/:ID/exhibitors/exhibitor-stall'> <ExhibitorStall /> </Route>
+                    <Route exact path='/main-lobby/:ID/exhibitors/exhibitor-stall/:ID'> <ExhibitorStall /> </Route>
                     <Route path='/settings'> <Setting /> </Route>
                     <Route path='/user-dashboard'><DashboardUser /></Route>
                     <Route path='/organize-events'><OrganizeEvents /></Route>

@@ -2,7 +2,7 @@ import React, { useState, useContext, useReducer } from 'react';
 import { initialState, reducer } from './reducers/userReducer';
 
 
-localStorage.setItem("modalOpen", null);
+// localStorage.setItem("modalOpen", null);
 
 const MyContext = React.createContext();
 const ModalContext = React.createContext();
@@ -32,7 +32,6 @@ export function MyProvider({ children }){
 
     const [state, dispatch] = useReducer(reducer, initialState);
 
-
     const [modalOpen, toggleModelOpenHandler] = useState(false);
     const [user, setUserHandler] = useState({});
     const [isBaseHeader, toggleHeaderHandler] = useState(true);
@@ -52,7 +51,7 @@ export function MyProvider({ children }){
 
     function toggleModelOpen(value){
         toggleModelOpenHandler(value);
-        localStorage.setItem("modalOpen", value);
+        // localStorage.setItem("modalOpen", value);
     }
 
     function toggleHeader(value){
@@ -64,7 +63,7 @@ export function MyProvider({ children }){
 
     return(
         <UserContext.Provider value={[JSON.parse(localStorage.getItem("user")), setUser]}>
-            <ModalContext.Provider value={[localStorage.getItem("modalOpen") == String(true), toggleModelOpen]}>
+            <ModalContext.Provider value={[modalOpen, toggleModelOpen]}>
                  <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") == String(true), toggleHeader]}>
                     <MyContext.Provider value={{state, dispatch}}>
                     { children }

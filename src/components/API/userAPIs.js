@@ -295,6 +295,26 @@ export function AddStallInEvent(data){
 
 }
 
+export function ExplicitlyAddStallInEvent(data){
+    console.log(data)
+    return CheckTokenExpiry()
+    .then(res => {  
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.post(Base_URL + '/stalls/event/add', data, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+
+}
+
 // Categories
 
 export function StallCategories(){
@@ -351,6 +371,73 @@ export function ChangeNames(id, data){
             reject(new Error(err));
         })
     } );
+}
+export function CheckUserAvailable(id){
+    const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.get(Base_URL + '/stalls/users/' + id, { headers:AuthorizationHeader })
+}
+
+export function BlockStallFromEvent(stallId){
+    return CheckTokenExpiry()
+    .then(res => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.put(Base_URL + '/stalls/block/' + stallId, {}, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+
+}
+
+export function GetStallByStallId(stallId){
+    return CheckTokenExpiry()
+    .then(res => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.get(Base_URL + '/stalls/stall/' + stallId, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+
+}
+
+
+export function SendEmailToStallOwner(data){
+    return CheckTokenExpiry()
+    .then(res => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.post(Base_URL + '/stalls/email', data, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+
 }
 
 export default null;

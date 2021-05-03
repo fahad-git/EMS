@@ -14,56 +14,56 @@ import MyContext, { useModalContext,  useHeaderContext, useUserContext } from '.
 
 // APIs goes here
 import { RefreshToken } from './API/Auth';
-import { EventOptions, StallCategories, EventStallsById } from './API/userAPIs';
+import { EventOptions, StallCategories, EventStallsById, BlockStallFromEvent } from './API/userAPIs';
 
 
-const exhibitors = [{
-    "name": "Exhibitor 1",
-    "img":stall
-},{
-    "name": "Exhibitor 2",
-    "img":stall
-},{
-    "name": "Exhibitor 3",
-    "img":stall
-},{
-    "name": "Exhibitor 4",
-    "img":stall
-},{
-    "name": "Exhibitor 5",
-    "img":stall
-},{
-    "name": "Exhibitor 6",
-    "img":stall
-},{
-    "name": "Exhibitor 7",
-    "img":stall
-},{
-    "name": "Exhibitor 8",
-    "img":stall
-},{
-    "name": "Exhibitor 2",
-    "img":stall
-},{
-    "name": "Exhibitor 3",
-    "img":stall
-},{
-    "name": "Exhibitor 4",
-    "img":stall
-},{
-    "name": "Exhibitor 5",
-    "img":stall
-},{
-    "name": "Exhibitor 6",
-    "img":stall
-},{
-    "name": "Exhibitor 7",
-    "img":stall
-},{
-    "name": "Exhibitor 8",
-    "img":stall
-}
-]
+// const exhibitors = [{
+//     "name": "Exhibitor 1",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 2",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 3",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 4",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 5",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 6",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 7",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 8",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 2",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 3",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 4",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 5",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 6",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 7",
+//     "img":stall
+// },{
+//     "name": "Exhibitor 8",
+//     "img":stall
+// }
+// ]
 
 
 
@@ -112,6 +112,8 @@ function Exhibitors(){
     var [categories, setCategories] = useState([]);
     var [showCollapseButton, setShowCollapseButton] = useState(true)
 
+    var [allEventStalls, setAllEventStalls] = useState([]);
+
     const [dimensions, setDimensions] = useState({ 
         height: window.innerHeight,
         width: window.innerWidth
@@ -124,17 +126,69 @@ function Exhibitors(){
             footer:""
           }
         setContent(cont);
-        toggleModelOpen(false);
-        
+        toggleModelOpen(true);
     }    
 
-    const exhibitorStallHandler = () => {
-        history.push(history.location.pathname + "/exhibitor-stall");
+    const exhibitorStallHandler = (stallId) => {
+        history.push(history.location.pathname + "/exhibitor-stall/" + stallId);
     }
 
     const categoryHandler = (name) => {
-        console.log(name);
         setSelectedCategory(name);
+        if(name == 'All'){
+            setStalls(allEventStalls);
+            return;
+        }
+ 
+        let tmp = [];
+        for(let i = 0; i < allEventStalls.length; i++){
+            if(allEventStalls[i].category == name)
+                tmp.push(allEventStalls[i])
+        }
+        setStalls(tmp);
+    }
+
+    const removeStall = (stallId, eventId) => {
+        BlockStallFromEvent(stallId)
+        .then(res => {
+            toast("Stall Removed Successfully", {
+                type:"info",
+                onClose: () => window.location.reload()
+                });
+        }).catch(err => {
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"error",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"warning",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
+        });
+
     }
 
     useEffect(
@@ -222,14 +276,26 @@ function Exhibitors(){
 
         EventStallsById(ID)
         .then(res => {
+            setAllEventStalls(res.data);
             setStalls(res.data);
         }).catch(err => {
             console.log();
         })
-    }, [])
+    }, [modalOpen])
 
 
     return  <>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={1000}
+                    hideProgressBar={true}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    />
                 {modalOpen?  <DynamicModal content={content} />: ''}
                 <hr/>
                 <Button variant="outline-secondary" onClick={ ()=> setShowCollapseButton(!showCollapseButton)} style={{display: showCollapseButton && window.innerWidth >400? "none" : "block"}} className="float-left"> <i className="material-icons">dashboard</i></Button>
@@ -280,12 +346,14 @@ function Exhibitors(){
                             </Row>
                             <hr/>
                             <Row>
-                                {stalls.map(({stall_id, event_id, name, description, category, slogan, logoImg, owner_name, about_us, status}, index)=>(
-                                    <Col key={index} onClick={exhibitorStallHandler} className="mb-5 mx-4 col-4" style={styles.stallContainer}>
+                                {stalls.map(({stall_Id, event_Id, name, description, category, slogan, logoImg, owner_name, about_us, status}, index)=>(
+                                    <Col key={index} className="mb-5 mx-4 col-4" style={styles.stallContainer}>
                                         <center>
+                                        <Col onClick={() => exhibitorStallHandler(stall_Id)}>
                                         <Image src={stall} style={styles.stall}/>
                                         <p>{name}</p>
-                                        <Button style={{display: isOrganizer ? "block":"none" , fontSize:"10px"}} variant="secondary">Remove</Button>
+                                        </Col>
+                                        <Button style={{display: isOrganizer ? "block":"none" , fontSize:"10px"}} onClick={ () => removeStall(stall_Id, event_Id)} variant="secondary">Remove</Button>
                                         </center>
                                     </Col>         
                                 ))}
