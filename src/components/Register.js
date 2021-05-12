@@ -42,8 +42,8 @@ function Register(){
         .then(res => {
             toast("Register Successfully", {
                 type:"info",
-                });
-            // history.push("/home");
+                onClose: () => history.push("/home")
+                });            
         }).catch(err => {
             toast("Registration failed", {
                 type:"info",
@@ -144,9 +144,9 @@ function Register(){
                                     rules={{ required: true }}
                                     control={control}
                                     defaultValue=""
-
                                     render={({ name, onBlur, onChange, value }) => (
                                         <PhoneInput
+                                        className="w-100"
                                         country = {'us'}
                                         name={name}
                                         value={value}

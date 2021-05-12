@@ -53,7 +53,7 @@ function ExhibitorStall(){
     const renderComponent = () => {
         switch(component){
             case "HOME":
-                return <StallHome />
+                return <StallHome data = {stall} />
             case "ABOUTUS":
                 return <StallAboutUs data = {stall}/>
             case "CONTACTUS":

@@ -14,10 +14,8 @@ import Invoice from './Invoice';
 import { useHistory } from 'react-router-dom';
 
 // API Callings
-import { AllEventsData, UpcomingEventsData } from './API/userAPIs';
+import { AllEventsData, UpcomingEventsData, RequestedEventsData } from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
-
-
 
 const styles = {
     container:{
@@ -64,6 +62,7 @@ function Events(){
 
      var [events, setEvents] = useState([]);
      const [allEvents, setAllEvents] = useState([]);
+     const [requestedEvents, setRequestedEvents] = useState([])
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -118,7 +117,6 @@ function Events(){
   
     useEffect(() => {
         const api = (user) ? AllEventsData : UpcomingEventsData;
-
         api()
         .then(res => {
             setAllEvents(res.data)
@@ -157,6 +155,47 @@ function Events(){
             })
 
         }});
+
+        if(user){
+            RequestedEventsData()
+            .then(res => {
+                console.log(res.data)
+                setRequestedEvents(res.data)
+            }).catch(err => {
+            //    Error
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+    
+            }});      
+        }
     },[])
 
     const renderModalHandler = () => {
@@ -201,7 +240,7 @@ function Events(){
                     <Row style={styles.container}>
                         <Col style={styles.title}>Upcoming Events</Col>
                     </Row> 
-                    <hr className="divider"/>   
+                    <hr className="divider"/>       
                     {/* Here wil go dynamic UI */}
                     {events.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"events"+index}>
@@ -229,6 +268,40 @@ function Events(){
                                 { ( new Date(start_date) ) > Date.now() ? <hr className="divider"/> : "" }
                                 </div>
                     })}
+                </Container>
+
+                <Container className="mb-5">
+                    <Row style={styles.container}>
+                        <Col style={styles.title}>Requested Events</Col>
+                    </Row> 
+                    <hr className="divider"/>       
+                    {/* Here wil go dynamic UI */}
+                    {requestedEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
+                        return <div key={"events"+index}>
+                            { ( new Date(start_date) ) > Date.now() ? 
+                                <Row key={"events-container"+index} className="event-items"  style={styles.container}>
+                                    <Col sm={12} md={10} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
+                                        <Row>
+                                            <Col sm={4} style={styles.heading}>{event_name} </Col>
+                                            <Col sm={6} style={styles.record}>Date & Time: {( new Date(start_date) ).toString()}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col sm={4} style={styles.record}>Organizier: {host_name} </Col>
+                                            <Col sm={6} style={styles.record}>type: {type} </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col sm={12} md={2}>
+                                        <Row>
+                                            <Col sm={6} md={12} className="mb-1" style={styles.record}>Status:</Col>                                    
+                                            <Col sm={6} md={12} style={styles.record}>{status}</Col>
+                                        </Row>
+                                    </Col>
+                                </Row> 
+                                : "" }
+                                { ( new Date(start_date) ) > Date.now() ? <hr className="divider"/> : "" }
+                                </div>
+                    })}
+                    <br/><br/>
                 </Container>
             </div>
             </>

@@ -7,7 +7,7 @@ import '../assets/css/Dashboard.css';
 
 import MyContext, { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 // APIs calling
-import {UpcomingEventsData, UserDashboardData} from './API/userAPIs';
+import {UpcomingEventsData, UserDashboardData, GetStallIdFromEventId} from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
 function DashboardUser(){
@@ -26,10 +26,10 @@ function DashboardUser(){
     const [myStalls, setMyStalls] = useState([]);
     const [upcomingEvents, setUpcomingEvents] = useState([]);
     
-    const [totalOrganizingEvents, setTotalOrganizingEvents] = useState();
-    const [totalAttendingEvents, setTotalAttendingEvents] = useState();
-    const [totalUpcomingEvents, setTotalUpcomingEvents] = useState();
-    const [totalStalls, setTotalStalls] = useState();
+    const [totalOrganizingEvents, setTotalOrganizingEvents] = useState(0);
+    const [totalAttendingEvents, setTotalAttendingEvents] = useState(0);
+    const [totalUpcomingEvents, setTotalUpcomingEvents] = useState(0);
+    const [totalStalls, setTotalStalls] = useState(0);
         
     const styles = {
         container:{
@@ -82,10 +82,50 @@ function DashboardUser(){
     }
 
     
-    const stallEventHandler = (id) => {
-        console.log("Row Clicked", id);
-        dispatch({type:"ATTEND-EVENT", params:{"id":id} });
-        history.push("/main-lobby/" + id);
+    const stallEventHandler = (eventId) => {
+        console.log("Row Clicked", eventId);
+        dispatch({type:"ATTEND-EVENT", params:{"id":eventId} });
+        GetStallIdFromEventId(eventId)
+        .then(res => {
+            if(!res.data.length){
+                toast("Invalid Selecction", {type:"error"});
+                return;
+            }
+            let stallId = res.data[0].stall_Id;
+            history.push("/main-lobby/" + eventId + "/exhibitors/exhibitor-stall/" + stallId);
+        }).catch(err => {
+            console.log(err)
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+            }
+        });
     }
 
     useEffect(()=>{
@@ -156,25 +196,25 @@ function DashboardUser(){
             <div className="dashboard">
                 <Container>
                     <Row style={styles.circles} className="justify-content-center">
-                        <Col xs={4} md>
+                        <Col xs={6} md={3}>
                             <Button className="circular-progress" href="#upcoming" >
                                 <h3> {totalUpcomingEvents} </h3>
                             </Button>
                             <p>Upcoming Events</p>
                         </Col>
-                        <Col style={styles.attending} xs={4} md>
+                        <Col style={styles.attending} xs={6} md={3}>
                             <Button className="circular-progress" href="#attending">
                                 <h3> {totalAttendingEvents} </h3>
                             </Button>
                             <p>Attending Events</p>
                         </Col>
-                        <Col style={styles.organizing} xs={4} md>
+                        <Col style={styles.organizing} xs={6} md={3}>
                             <Button className="circular-progress" href="#organizing">
                             <h3> {totalOrganizingEvents} </h3>
                             </Button>
                             <p>Organizing Events</p>                            
                         </Col>
-                        <Col style={styles.stall} xs={4} md>
+                        <Col style={styles.stall} xs={6} md={3}>
                             <Button className="circular-progress" href="#stalls">
                                 <h3> {totalStalls} </h3>
                             </Button>
@@ -260,23 +300,22 @@ function DashboardUser(){
                     </Row> 
                     <hr className="divider"/>   
                     {myStalls.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
-                        return <div key={"stall"+ index}>
-                                    <Row key={"stall-container"+ index} style={styles.container}>
-                                        <Col onClick={ () => stallEventHandler(event_Id)}  className="event-items"  style={styles.eventSelection}>
-                                            <Row>
-                                            <Col style={styles.heading}>{event_name} </Col>
-                                            <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
-                                            </Row>
-                                            <Row>
-                                            <Col style={styles.record}>Organizier: {host_name} </Col>
-                                            <Col style={styles.record}>Type: {type} </Col>
-                                            </Row>
-                                        </Col>
-                                    </Row> 
-                                    <hr className="divider"/>
-                                </div>  
-                                                                
-                    })}
+                            return <div key={"stall"+ index}>
+                                        <Row key={"stall-container"+ index} style={styles.container}>
+                                            <Col onClick={ () => stallEventHandler(event_Id)}  className="event-items"  style={styles.eventSelection}>
+                                                <Row>
+                                                <Col style={styles.heading}>{event_name} </Col>
+                                                <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>
+                                                </Row>
+                                                <Row>
+                                                <Col style={styles.record}>Organizier: {host_name} </Col>
+                                                <Col style={styles.record}>Type: {type} </Col>
+                                                </Row>
+                                            </Col>
+                                        </Row> 
+                                        <hr className="divider"/>
+                                    </div>  
+                        })}
                 </Container>
                 <Container id="upcoming">
                     <Row style={styles.container}>

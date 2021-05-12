@@ -13,7 +13,7 @@ import './../assets/css/EventManagement.css';
 import { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
 
 // APIs
-import { EventDetailsByID, RequestForStall, StallCategories } from './API/userAPIs';
+import { EventDetailsByID, StallCategories, BuyEventTicket } from './API/userAPIs';
 import { RefreshToken } from './API/Auth';
 
 
@@ -52,15 +52,12 @@ function Invoice(props){
         }
     }
     
-    const onSubmit = data => {
-        data["event_Id"] = ID;
-        console.log(data);
-        
-        RequestForStall(data)
+    const onSubmit = () => {
+        BuyEventTicket(ID)
         .then(res => {
             setLockFields(true);
-            toast("Proposal submitted successfully please wait for admin to approve", { type:"info",});
-            window.location.reload();
+            toast("Ticket buy request submitted successfully please wait for admin to approve", 
+            { type:"info", onClose: () => window.location.reload() });
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){
@@ -104,7 +101,6 @@ function Invoice(props){
     useEffect(() => {
         EventDetailsByID(ID)
         .then(res => {
-            console.log(res.data[0])
             setEventData(res.data[0]);
         }).catch(err => {
             console.log(err)
@@ -153,7 +149,7 @@ function Invoice(props){
 
     return  <>
                 <Container>
-                    <Form >
+                    <Form>
                         <Form.Group as={Row} controlId="formBasicEventName">
                             <Col sm={{span:8, offset:2}}>
                                 <Form.Label>Event Name:</Form.Label>
@@ -210,7 +206,7 @@ function Invoice(props){
 
                         <Row>
                             <Col sm={{span:8, offset:2}}>
-                                <Button size="lg" variant="dark" type="submit" onClick={() => setRequestFormDisplay("block")} style={styles.btn} >
+                                <Button size="lg" variant="dark" onClick={onSubmit} style={styles.btn} >
                                     Confirm
                                 </Button>
                             </Col>

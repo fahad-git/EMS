@@ -1,6 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
 import {Container, Row, Col, Button, Image, Card} from "react-bootstrap";
 import "./../../assets/css/Carousel.css";
+import TextEllipsis from 'react-text-ellipsis';
+
+const styles = {
+    img:{
+        width: '18rem',
+        height: '10rem',
+    },
+    des:{
+        width: '100%',
+        height: '6rem',
+    }
+
+}
 
 function ProductTile(props){
 
@@ -14,15 +27,31 @@ function ProductTile(props){
 
     return  <>
             <div className="carousel">
-            <Card style={{ width: '18rem' }} className={tileClass()}>
-                <Card.Img variant="top" src="https://neilpatel.com/wp-content/uploads/2017/09/image-editing-tools.jpg" />
+            <Card style={{ width: '18rem' , height: '25rem' }} className={tileClass()}>
+                <Card.Img variant="top" style={styles.img} src={props.item.image1} />
                 <Card.Body>
-                    <Card.Title>Card Title {props.item}</Card.Title>
-                    <Card.Text>
-                    Some quick example text to build on the card title and make up the bulk of
-                    the card's content.
-                    </Card.Text>
-                    <Button variant="secondary">Go somewhere</Button>
+                    <Card.Title >{props.item.name}</Card.Title>
+                    <Card.Text className="text-left"><b>Price: €{props.item.price}</b></Card.Text>
+                        <div style={styles.des}>
+                        <TextEllipsis 
+                            lines={3} 
+                            tag={'p'} 
+                            ellipsisChars={'...'} 
+                            tagClass={'className'} 
+                            debounceTimeoutOnResize={200} 
+                            useJsOnly={true} 
+                            onResult={(result) => { 
+                                if (result === TextEllipsis.RESULT.TRUNCATED)
+                                    console.log();
+                                // console.log('text get truncated');
+                                else 
+                                    console.log();
+                                // console.log('text does not get truncated');
+                                }}>
+                                {props.item.description}
+                        </TextEllipsis>
+                        </div>
+                    <Button variant="dark" className="align-bottom" style={styles.btn}  onClick={props.onChange}>More</Button>
                 </Card.Body>
             </Card>
             </div>
