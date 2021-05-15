@@ -34,7 +34,6 @@ function Login(){
             if(res.data.success)
             {
             const usr = res.data.user;
-            console.log(usr)
             var d = new Date();
             d.setSeconds(d.getSeconds() + usr.tokenExpiry);
             usr.tokenExpiry = d;
@@ -42,7 +41,7 @@ function Login(){
             setUser(usr);
             toggleHeader(false);
             toggleModelOpen(false);
-            if(usr.role === "Admin")
+            if(usr.userType === "Admin")
                 history.push("/dashboard");
             else
                 history.push("/user-dashboard");

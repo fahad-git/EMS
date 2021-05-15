@@ -2,20 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button, Container, Row, Col, DropdownButton, Dropdown } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import SearchField from "react-search-field";
-import DynamicModal from './DynamicModal';
+import DynamicModal from './../DynamicModal';
 
 // CSS
-import '../assets/css/Dashboard.css';
+import '../../assets/css/Dashboard.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useModalContext,  useHeaderContext, useUserContext } from './MyContext';
-import EventDetails from './EventDetails';
-import Invoice from './Invoice';
+import { useModalContext,  useHeaderContext, useUserContext } from './../MyContext';
+import EventDetails from './../EventDetails';
+import Invoice from './../Invoice';
 import { useHistory } from 'react-router-dom';
 
 // API Callings
-import { AllEventsData, UpcomingEventsData, RequestedEventsData } from './API/userAPIs';
-import { RefreshToken } from './API/Auth';
+import { AllEventsData, UpcomingEventsData, RequestedEventsData } from './../API/userAPIs';
+import { AllEventRequestForAdmin, UpdateEventRequestForAdmin } from './../API/AdminAPIs';
+import { RefreshToken } from './../API/Auth';
 
 const styles = {
     container:{
@@ -43,21 +44,14 @@ const styles = {
         borderRadius: "50%"
     },
     eventSelection:{
-        cursor:"default"
+        cursor:"default",
     },
     btn:{
         width:"100px"
     }
 }
 
-const roleLookUp = {
-    7: "Attending",
-    6: "Stall",
-    5: "Organizing",
-    4: "Organizing",
-}
-
-function Events(){
+function EventRequests(){
 
     const history = useHistory();
 
@@ -119,7 +113,45 @@ function Events(){
     }
 
     const selectedEventHandler = (event_Id) => {
-        console.log(event_Id)
+        // console.log(event_Id)
+        return;
+    }
+
+    const eventActionHandler = (updateStatus, roleId) => {
+        UpdateEventRequestForAdmin({"status": updateStatus}, roleId)
+        .then(res => {
+            toast("Event " + updateStatus, {type:"info", onClose: () => window.location.reload()})
+        }).catch(err => {
+            if(err.message === "INVALID"){
+                toast("Please login to access events", {
+                    type:"info",
+                    });
+            }else if(err.message === "EXPIRED"){
+                toast("You must login first", {
+                    type:"info",
+                    });
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+            }else if(err.message === "REFRESH"){
+                RefreshToken()
+                .then(res => {
+                    if(res.data.success){
+                        console.log("Token Refreshed")
+                        var d = new Date();
+                        d.setSeconds(d.getSeconds() + res.data.user.tokenExpiry);
+                        res.data.user.tokenExpiry = d;
+                        setUser(res.data.user);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    localStorage.clear();
+                    toggleHeader(true);
+                    window.location.reload();
+                    history.push("/");
+                })
+        }});
     }
   
     useEffect(() => {
@@ -164,7 +196,7 @@ function Events(){
         }});
 
         if(user){
-            RequestedEventsData()
+            AllEventRequestForAdmin()
             .then(res => {
                 console.log(res.data)
                 setRequestedEvents(res.data)
@@ -242,61 +274,35 @@ function Events(){
                         </Col>
                     </Row>
                 </Container>
-
-                <Container>
-                    <Row style={styles.container}>
-                        <Col style={styles.title}>Upcoming Events</Col>
-                    </Row> 
-                    <hr className="divider"/>       
-                    {/* Here wil go dynamic UI */}
-                    {events.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
-                        return <div key={"events"+index}>
-                            { ( new Date(start_date) ) > Date.now() ? 
-                                <Row key={"events-container"+index} className="event-items"  style={styles.container}>
-                                    <Col sm={12} md={10} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
-                                        <Row>
-                                        <Col sm={4} style={styles.heading}>{event_name} </Col>
-                                        <Col sm={6} style={styles.record}>Date & Time: {( new Date(start_date) ).toString()}</Col>
-                                        </Row>
-                                        <Row>
-                                        <Col sm={4} style={styles.record}>Organizier: {host_name} </Col>
-                                        <Col sm={6} style={styles.record}>type: {type} </Col>
-                                        </Row>
-                                    </Col>
-
-                                    <Col sm={12} md={2}>
-                                        <Row>
-                                            <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={ () => detailsHandler(event_Id)} style={styles.btn} variant="secondary">Details</Button></Col>                                    
-                                            <Col sm={6} md={12} style={styles.record}><Button onClick={ () => buyTicketHandler(event_Id) } style={styles.btn} variant="secondary">Buy Ticket</Button></Col>
-                                        </Row>
-                                    </Col>
-                                </Row> 
-                                : "" }
-                                { ( new Date(start_date) ) > Date.now() ? <hr className="divider"/> : "" }
-                                </div>
-                    })}
-                </Container>
-
+                
                 <Container className="mb-5">
                     <Row style={styles.container}>
                         <Col style={styles.title}>Requested Events</Col>
                     </Row> 
                     <hr className="divider"/>       
                     {/* Here wil go dynamic UI */}
-                    {requestedEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name, role_Id}, index) => {
+                    {requestedEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name, userRole_id}, index) => {
                         return <div key={"events"+index}>
                             { ( new Date(start_date) ) > Date.now() ? 
                                 <Row key={"events-container"+index} className="event-items"  style={styles.container}>
                                     <Col sm={12} md={12} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
-                                        <Row className="my-1">
+                                        <Row className="my-2">
                                             <Col sm={4} style={styles.heading}>{event_name} </Col>
-                                            <Col sm={5} style={styles.record}><b>Date & Time:</b> {( new Date(start_date) ).toString()}</Col>
-                                            <Col sm={3} style={styles.record}><b>Status:</b> {status}</Col> 
+                                            <Col sm={8} style={styles.record}><b>Start Date & Time:</b> {( new Date(start_date) ).toString()}</Col>
                                         </Row>
-                                        <Row>
+                                        <Row className="my-2">
                                             <Col sm={4} style={styles.record}><b>Organizier:</b> {host_name} </Col>
-                                            <Col sm={5} style={styles.record}><b>Request For:</b> {roleLookUp[role_Id]} </Col>
-                                            <Col sm={3} style={styles.record}><b>Type:</b> {type} </Col>
+                                            <Col sm={8} style={styles.record}><b>End Date & Time:</b> {( new Date(end_date) ).toString()}</Col>
+                                        </Row>
+                                        <Row className="my-2">
+                                            <Col sm={4} style={styles.record}><b>type:</b> {type} </Col>
+                                            <Col sm={8} style={styles.record}><b>Description:</b> {description} </Col>
+                                        </Row>
+                                        <Row className="my-2">
+                                            <Col sm={12} style={styles.record}>
+                                                <Button variant="secondary" className="float-right mx-3" onClick={() => eventActionHandler("Active", userRole_id)}>Approve</Button>
+                                                <Button variant="secondary" className="float-right mx-3" onClick={() => eventActionHandler("Rejected", userRole_id)}>Reject</Button>
+                                            </Col>
                                         </Row>
                                     </Col>
                                 </Row> 
@@ -306,36 +312,48 @@ function Events(){
                     })}
                     <br/><br/>
                 </Container>
-            </div>
-            </>
 
-}
-export default Events;
-
-{/*
                 <Container>
                     <Row style={styles.container}>
-                        <Col style={styles.title}>Upcoming Events</Col>
+                        <Col style={styles.title}>All Events</Col>
                     </Row> 
-                    <hr className="divider"/>   
-                    <Row style={styles.container} className="justify-content-center" >
-                        <Col style={styles.heading}>Name </Col>
-                        <Col style={styles.heading}>Date</Col>
-                        <Col style={styles.heading}>Host Name </Col>
-                        <Col style={styles.heading}>Details</Col>
-                    </Row>
-                    <hr className="divider"/>   
+                    <hr className="divider"/>       
+                    {/* Here wil go dynamic UI */}
+                    {events.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
+                        return <div key={"events"+index}>
+                            { ( new Date(start_date) ) > Date.now() ? 
+                                <Row key={"events-container"+index} className="event-items"  style={styles.container}>
+                                    <Col sm={12} md={12} onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
+                                        <Row>
+                                            <Col sm={4} style={styles.heading}>{event_name} </Col>
+                                            <Col sm={6} style={styles.record}><b>Date & Time:</b> {( new Date(start_date) ).toString()}</Col>
+                                            <Col sm={2} style={styles.record}><b>Host:</b> {host_name}</Col>
+                                        </Row>
+                                        <Row>
+                                            <Col sm={4} style={styles.record}><b>Organizier:</b> {host_name} </Col>
+                                            <Col sm={6} style={styles.record}><b>type:</b> {type} </Col>
+                                            <Col sm={2} style={styles.record}><b>Rating:</b> {rating} / 5</Col>
+                                        </Row>
+                                    </Col>
 
-                    
-                    {events.map( ({name, date, host, details}, index) => {
-                        return <Row key={index} style={styles.container}>
-                                    <Col style={styles.record}>{name} </Col>
-                                    <Col style={styles.record}>{date}</Col>
-                                    <Col style={styles.record}>{host}</Col>
-                                    <Col style={styles.record}>{details} </Col>
-                                </Row>                                   
+                                    <Col sm={12} md={2}>
+                                        <Row>
+                                            {/* <Col sm={6} md={12} className="mb-1" style={styles.record}><Button onClick={ () => detailsHandler(event_Id)} style={styles.btn} variant="secondary">Details</Button></Col>                                    
+                                            <Col sm={6} md={12} style={styles.record}><Button onClick={ () => buyTicketHandler(event_Id) } style={styles.btn} variant="secondary">Buy Ticket</Button></Col> */}
+                                        </Row>
+                                    </Col>
+                                </Row> 
+                                : "" }
+                                { ( new Date(start_date) ) > Date.now() ? <hr className="divider"/> : "" }
+                                </div>
                     })}
-                    <hr className="divider"/>
-
                 </Container>
-*/}
+
+            </div>
+            <Row className="my-5">
+                <Col className="my-5">
+                </Col>
+            </Row>
+            </>
+}
+export default EventRequests;

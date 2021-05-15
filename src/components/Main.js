@@ -26,6 +26,8 @@ import NavbarFooter from './HeadersAndFooters/NavbarFooter';
 
 import AddUser from './AddUser';
 import OrganizeEvents from './OrganizingEvent';
+import EventRequests from './Admin/EventRequests';
+import AttendRequests from './AttendRequest';
 
 // import { RefreshToken } from './components/API/Auth';
 
@@ -80,6 +82,9 @@ function Main(){
                     <Route path='/dashboard'> <Dashboard /> </Route>
                     <Route path='/main-lobby/:ID/user-management'> <UserManagement /> </Route>
                     <Route path='/events'> <Events /> </Route>
+                    <Route exact path='/admin/events'> <EventRequests /> </Route>
+                    <Route exact path='/organizer/events'> <AttendRequests /> </Route>
+
                     <Route exact path='/main-lobby/:ID'> 
                         <MainLobby /> 
                     </Route>

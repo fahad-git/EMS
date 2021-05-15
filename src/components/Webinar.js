@@ -117,7 +117,6 @@ function Webinar() {
     useEffect(()=>{
 
         var arr = history.location.pathname.split("/");
-        console.log(arr)
     
         var ID = -1;
         for(let i of arr)

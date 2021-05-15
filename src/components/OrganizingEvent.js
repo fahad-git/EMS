@@ -98,6 +98,10 @@ function OrganizingEvents(){
         console.log(eventId)
     }
 
+    const requestsHandler = () => {
+        history.push("/organizer/events");
+    }
+
     useEffect(() => {
         OrganizingEventsData()
         .then(res => {
@@ -136,7 +140,7 @@ function OrganizingEvents(){
                 })
             }
         })
-    },[])
+    },[modalOpen])
 
   
     return  <>
@@ -186,13 +190,20 @@ function OrganizingEvents(){
                                 <Row key={"events-container"+index} className="event-items" style={styles.container}>
                                     <Col onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
                                         <Row>
-                                        <Col sm={5} style={styles.heading}>{event_name} </Col>
-                                        <Col sm={7} style={styles.record}>Date & Time: { (new Date(start_date)).toString() }</Col>
+                                            <Col sm={5} style={styles.heading}>{event_name} </Col>
+                                            <Col sm={7} style={styles.record}><b>Date & Time:</b> { (new Date(start_date)).toString() }</Col>
                                         </Row>
                                         <Row>
-                                        <Col sm={5} style={styles.record}>Organizier: {host_name} </Col>
-                                        <Col sm={7} style={styles.record}>Type: {type} </Col>
+                                            <Col sm={5} style={styles.record}><b>Organizier:</b> {host_name} </Col>
+                                            <Col sm={7} style={styles.record}><b>Type:</b> {type} </Col>
                                         </Row>
+                                        <Row>
+                                            <Col sm={12} style={styles.record}>
+                                                <Button variant="secondary" className="float-right mx-3 my-2">Details</Button>
+                                                <Button variant="secondary" className="float-right mx-3 my-2" onClick={requestsHandler}>Requests</Button>
+                                            </Col>
+                                        </Row>
+
                                     </Col>
                                 </Row>
                                 <hr className="divider"/>

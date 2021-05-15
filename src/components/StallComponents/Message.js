@@ -30,10 +30,8 @@ function Message(props){
 
     const onSubmit = data => {
         data["stall_Id"] = props.data.stall_Id;
-        console.log(data);
         SendEmailToStallOwner(data)
         .then(res => {
-            console.log(res)
             toast("Message sent sucessfully", {type: "info"})
             reset({ name: "", email: "", subject: "",  message:"" });
             setDisableFields(false);

@@ -37,7 +37,7 @@ function Register(){
         var salt = bcrypt.genSaltSync(10);
         data.password = bcrypt.hashSync(data.password, salt);
 
-        console.log(data);
+        // console.log(data);
         RegisterUser(data)
         .then(res => {
             toast("Register Successfully", {

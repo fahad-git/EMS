@@ -53,14 +53,11 @@ function EventDetails(props){
     }
     
     const onSubmit = data => {
-        data["event_Id"] = ID;
-        console.log(data);
-        
+        data["event_Id"] = ID;        
         RequestForStall(data)
         .then(res => {
             setLockFields(true);
-            toast("Proposal submitted successfully please wait for admin to approve", { type:"info",});
-            window.location.reload();
+            toast("Proposal submitted successfully please wait for admin to approve", { type:"info", onClose: () => window.location.reload()});
         }).catch(err => {
             console.log(err)
             if(err.message === "INVALID"){

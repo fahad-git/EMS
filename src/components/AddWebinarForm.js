@@ -147,7 +147,7 @@ function AddWebinarForm() {
                                 {errors.date?.type === "minLength" && <div className="err">{"Your input is less than minimum length"} </div> }                                                     
                             </DatetimePickerTrigger>
                         </Col>
-                        </Form.Group>
+                    </Form.Group>
 
                     {/* <Form.Group as={Row} controlId="formBasicWebinarDate">
                         <Col sm={{span:8, offset:2}}>

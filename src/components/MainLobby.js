@@ -16,11 +16,11 @@ import "./../assets/css/Stalls.css";
 import { RefreshToken } from './API/Auth';
 import { EventOptions, EventLobbyImages, UpdateEventLobbyImages } from './API/userAPIs';
 
-import screen1 from "./../assets/images/advertise5.png";
-import screen2 from "./../assets/images/advertise5.png";
-import screen3 from "./../assets/images/advertise5.png";
-import screen4 from "./../assets/images/advertise5.png";
-import screen5 from "./../assets/images/advertise5.png";
+// import screen1 from "./../assets/images/advertise5.png";
+// import screen2 from "./../assets/images/advertise5.png";
+// import screen3 from "./../assets/images/advertise5.png";
+// import screen4 from "./../assets/images/advertise5.png";
+// import screen5 from "./../assets/images/advertise5.png";
 
 import gate1 from "./../assets/images/gate1.png";
 import gate2 from "./../assets/images/gate2.png";
@@ -29,13 +29,13 @@ import reception from "./../assets/images/reception.png";
 // css goes here
 import './../assets/css/MainLobby.css';
 
-const imgs = {
-    src1:"https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/3aaa3d4c-33d5-4df8-8dc2-17fb1a0f302a/15.jpg",
-    src2:"https://lh3.googleusercontent.com/proxy/Tj_crS8zZBsCE383p0KL3HxPW44QJZeAuW1wyNBgXMWy9mfcme9h0TEgmD9dOHwZ1dfpLI9C4e6NdNo1TsOHieipKjMCbvyQ2RfgBeilIvIb_J_xGS3APNIxML9zPaXn6RGCMaBx3ryuGaLmx-SR0wGZjBSm4-aduicD2aG7FktUmaenjiwcY4c",
-    src3:"https://lh3.googleusercontent.com/proxy/Tj_crS8zZBsCE383p0KL3HxPW44QJZeAuW1wyNBgXMWy9mfcme9h0TEgmD9dOHwZ1dfpLI9C4e6NdNo1TsOHieipKjMCbvyQ2RfgBeilIvIb_J_xGS3APNIxML9zPaXn6RGCMaBx3ryuGaLmx-SR0wGZjBSm4-aduicD2aG7FktUmaenjiwcY4c",
-    src4:"http://www.onextrapixel.com/wp-content/uploads/2012/01/products-design-3.jpg",
-    src5: "https://assets.crowdspring.com/marketing/landing-page/crowdspring-product-design-phase1-1120.jpg"
-}
+// const imgs = {
+//     src1:"https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/3aaa3d4c-33d5-4df8-8dc2-17fb1a0f302a/15.jpg",
+//     src2:"https://lh3.googleusercontent.com/proxy/Tj_crS8zZBsCE383p0KL3HxPW44QJZeAuW1wyNBgXMWy9mfcme9h0TEgmD9dOHwZ1dfpLI9C4e6NdNo1TsOHieipKjMCbvyQ2RfgBeilIvIb_J_xGS3APNIxML9zPaXn6RGCMaBx3ryuGaLmx-SR0wGZjBSm4-aduicD2aG7FktUmaenjiwcY4c",
+//     src3:"https://lh3.googleusercontent.com/proxy/Tj_crS8zZBsCE383p0KL3HxPW44QJZeAuW1wyNBgXMWy9mfcme9h0TEgmD9dOHwZ1dfpLI9C4e6NdNo1TsOHieipKjMCbvyQ2RfgBeilIvIb_J_xGS3APNIxML9zPaXn6RGCMaBx3ryuGaLmx-SR0wGZjBSm4-aduicD2aG7FktUmaenjiwcY4c",
+//     src4:"http://www.onextrapixel.com/wp-content/uploads/2012/01/products-design-3.jpg",
+//     src5: "https://assets.crowdspring.com/marketing/landing-page/crowdspring-product-design-phase1-1120.jpg"
+// }
 
 const styles = {
     img: {
@@ -82,11 +82,11 @@ function MainLobby(){
 
     var [logoImg1, setLogoImg1] = useState(); 
     var [logoImg2, setLogoImg2] = useState(); 
-    var [logoImg3, setLogoImg3] = useState(screen3); 
-    var [logoImg4, setLogoImg4] = useState(screen4); 
-    var [logoImg5, setLogoImg5] = useState(screen5);
-    var [sideScreenLeft, setSideScreenLeft] = useState(screen1); 
-    var [sideScreenRight, setSideScreenRight] = useState(screen1); 
+    var [logoImg3, setLogoImg3] = useState(); 
+    var [logoImg4, setLogoImg4] = useState(); 
+    var [logoImg5, setLogoImg5] = useState();
+    var [sideScreenLeft, setSideScreenLeft] = useState(); 
+    var [sideScreenRight, setSideScreenRight] = useState(); 
 
 
     const ID = history.location.pathname.split("/").pop();

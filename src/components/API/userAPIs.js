@@ -62,7 +62,7 @@ export function RequestedEventsData(){
     if(user)
         token = user.token;
     const AuthorizationHeader = { "Authorization": "Bearer " + token }
-    return axios.get(Base_URL + '/events/user/requested', { headers:AuthorizationHeader });
+    return axios.get(Base_URL + '/events/user/requested/' + user.user_Id, { headers:AuthorizationHeader });
 }
 
 
@@ -176,7 +176,6 @@ export function RequestForEvent(data){
         if(user)
             token = user.token;
         const AuthorizationHeader = { "Authorization": "Bearer " + token }
-        data["user_Id"] = user.user_Id;
         return axios.post(Base_URL + '/events/user/request', data, { headers:AuthorizationHeader })
   
     }).catch(err => {
@@ -579,6 +578,26 @@ export function SendEmailToStallOwner(data){
             reject(new Error(err));
         })
     } );
+}
+
+
+
+export function SendEmailToOrganizer(data){
+    return CheckTokenExpiry()
+    .then(res => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        
+        return axios.post(Base_URL + '/events/email', data, { headers:AuthorizationHeader })
+  
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
 
 }
 
@@ -649,6 +668,40 @@ export function UpdateStallImages(stallId, data){
             token = user.token;
         const AuthorizationHeader = { "Authorization": "Bearer " + token }
         return axios.put(Base_URL + '/stalls/stall/images/' + stallId, data, {headers:AuthorizationHeader })
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+}
+
+// Organizer specific APIs
+
+export function AllEventRequestForOrganizer(){
+    return CheckTokenExpiry()
+    .then(res => {        
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        return axios.get(Base_URL + '/events/organizer', { headers:AuthorizationHeader });
+    }).catch(err => {
+        return new Promise((resolve, reject) => {
+            reject(new Error(err));
+        })
+    } );
+}
+
+export function UpdateEventRequestForOrganizer(data, roleId){
+    return CheckTokenExpiry()
+    .then(res => {        
+        const user = JSON.parse(localStorage.getItem("user"));
+        var token = "";
+        if(user)
+            token = user.token;
+        const AuthorizationHeader = { "Authorization": "Bearer " + token }
+        return axios.put(Base_URL + '/events/organizer/' + roleId, data, { headers:AuthorizationHeader });
     }).catch(err => {
         return new Promise((resolve, reject) => {
             reject(new Error(err));
