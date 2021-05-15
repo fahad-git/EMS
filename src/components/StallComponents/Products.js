@@ -97,7 +97,7 @@ function Products(props){
                 <Container style={styles.container}>
                     <Row className="mt-5">
                         <Col>
-                            <h1>Catalogues</h1>
+                            <h1>Products</h1>
                         </Col>
                     </Row>
                     <Row>

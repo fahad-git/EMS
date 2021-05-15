@@ -285,7 +285,7 @@ function EventDetails(props){
                         <Form.Group as={Row} controlId="formBasicLogoImage">
                             {/* <Form.Label>Password</Form.Label> */}
                             <Col sm={{span:8, offset:2}}>
-                                <Form.Control disabled = {lockFields} name="logoImage" type="text" placeholder="Logo Image" ref={register({required: true, minLength:3})} />
+                                <Form.Control disabled = {lockFields} name="logoImage" type="text" placeholder="Instagram Link" ref={register({required: true, minLength:3})} />
                                 {errors.logoImage?.type === "required" && <div style={ styles.err }>{"� This field is mandatory."} </div> }
                                 {errors.logoImage?.type === "minLength" && <div style={styles.err}>{"� Your input is less than minimum length"} </div> }                             
 

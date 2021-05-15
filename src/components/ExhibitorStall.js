@@ -19,6 +19,9 @@ import StallAboutUs from './StallComponents/StallAboutUs';
 import StallContactUs from './StallComponents/StallContactUs';
 import Products from './StallComponents/Products';
 import Message from './StallComponents/Message';
+import Chat from './StallComponents/Chat';
+import StallVideos from './StallComponents/StallVideos';
+import Catalogues from './StallComponents/Catalogues';
 
 const styles = {
     main:{
@@ -62,6 +65,12 @@ function ExhibitorStall(){
                 return <Products data={stall} />
             case "MESSAGE":
                 return <Message data={stall} />
+            case "CHAT":
+                return <Chat data={stall} />
+            case "VIDEOS":
+                return <StallVideos data={stall} />
+            case "CATALOGUE":
+                return <Catalogues data={stall} />  
         }
     }
 
@@ -150,16 +159,16 @@ function ExhibitorStall(){
                                 <Nav.Link  href="#about-us" onClick={() => setComponent("ABOUTUS")} >About Us</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link href="#catalogue" onClick={() => setComponent("PRODUCTS")} >Catalogues & Price List</Nav.Link>
+                                <Nav.Link href="#catalogue" onClick={() => setComponent("CATALOGUE")} >Catalogues & Price List</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link>Order Product</Nav.Link>
+                                <Nav.Link href="#catalogue" onClick={() => setComponent("PRODUCTS")}>Order Product</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link href="#message" onClick={() => setComponent("MESSAGE")}>Leave a Message</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link>Start Chat</Nav.Link>
+                                <Nav.Link  href="#chat" onClick={() => setComponent("CHAT")}>Start Chat</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link>Book a slot</Nav.Link>
@@ -168,8 +177,8 @@ function ExhibitorStall(){
                                 <Dropdown.Toggle as={NavLink}>More</Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     <Dropdown.Item  href="#contact-us" onClick={() => setComponent("CONTACTUS")} >Contact Us</Dropdown.Item>
-                                    <Dropdown.Item>Instagram</Dropdown.Item>
-                                    <Dropdown.Item>Video</Dropdown.Item>
+                                    <Dropdown.Item href={stall?.logoImage} target="_blank">Instagram</Dropdown.Item>
+                                    <Dropdown.Item href="#videos" onClick={() => setComponent("VIDEOS")}>Videos</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Nav>
