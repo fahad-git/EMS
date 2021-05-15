@@ -1,9 +1,9 @@
 // import history, { useHistory } from 'react-router-dom';
 // import { useHeaderContext, useUserContext } from '../MyContext';
 
-export const Base_URL = "http://localhost:8000";
+// export const Base_URL = "http://localhost:8000";
 
-// export const Base_URL = "http://3.137.205.27:8000";
+export const Base_URL = "http://3.10.211.165:8000";
 
 function CheckTokenExpiry () {
     // const history = useHistory()
