@@ -34,7 +34,7 @@ export function MyProvider({ children }){
 
     const [modalOpen, toggleModelOpenHandler] = useState(false);
     const [user, setUserHandler] = useState({});
-    const [isBaseHeader, toggleHeaderHandler] = useState(true);
+    const [isBaseHeader, toggleHeaderHandler] = useState();
 
 
     // useEffect(() => {
@@ -64,7 +64,7 @@ export function MyProvider({ children }){
     return(
         <UserContext.Provider value={[JSON.parse(localStorage.getItem("user")), setUser]}>
             <ModalContext.Provider value={[modalOpen, toggleModelOpen]}>
-                 <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") == String(true), toggleHeader]}>
+                 <HeaderContext.Provider value={[localStorage.getItem("isBaseHeader") === String(true), toggleHeader]}>
                     <MyContext.Provider value={{state, dispatch}}>
                     { children }
                     </MyContext.Provider>

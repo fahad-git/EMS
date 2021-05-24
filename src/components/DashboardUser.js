@@ -76,7 +76,6 @@ function DashboardUser(){
     }
     
     const organizingEventHandler = (id) => {
-        console.log("Row Clicked", id);
         dispatch({type:"ATTEND-EVENT", params:{"id":id} });
         history.push("/main-lobby/" + id);
     }
@@ -325,7 +324,7 @@ function DashboardUser(){
                     {upcomingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"stall"+ index}>
                                     <Row key={"stall-container"+ index} style={styles.container}>
-                                        <Col onClick={ () => toast("Click events to see details", {type:"info"})} className="event-items"  style={styles.eventSelection}>
+                                        <Col onClick={ () => history.push("/events") } className="event-items"  style={styles.eventSelection}>
                                             <Row>
                                             <Col style={styles.heading}>{event_name} </Col>
                                             <Col style={styles.record}>Date & Time: {(new Date(start_date)).toString()}</Col>

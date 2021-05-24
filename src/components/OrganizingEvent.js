@@ -95,7 +95,7 @@ function OrganizingEvents(){
     }
 
     const selectedEventHandler = (eventId) => {
-        console.log(eventId)
+        history.push("/main-lobby/" + eventId);
     }
 
     const requestsHandler = () => {
@@ -188,7 +188,7 @@ function OrganizingEvents(){
                     {organizingEvents.map( ({event_Id, eventLobby_Id, event_name, type, description, start_date, end_date, status, rating, host_name}, index) => {
                         return <div key={"events"+index}>
                                 <Row key={"events-container"+index} className="event-items" style={styles.container}>
-                                    <Col onClick={ () => selectedEventHandler(event_Id)} style={styles.eventSelection}>
+                                    <Col style={styles.eventSelection}>
                                         <Row>
                                             <Col sm={5} style={styles.heading}>{event_name} </Col>
                                             <Col sm={7} style={styles.record}><b>Date & Time:</b> { (new Date(start_date)).toString() }</Col>
@@ -199,7 +199,7 @@ function OrganizingEvents(){
                                         </Row>
                                         <Row>
                                             <Col sm={12} style={styles.record}>
-                                                <Button variant="secondary" className="float-right mx-3 my-2">Details</Button>
+                                                <Button variant="secondary" className="float-right mx-3 my-2" onClick={ () => selectedEventHandler(event_Id)}>Details</Button>
                                                 <Button variant="secondary" className="float-right mx-3 my-2" onClick={requestsHandler}>Requests</Button>
                                             </Col>
                                         </Row>

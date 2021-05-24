@@ -34,38 +34,25 @@ import AttendRequests from './AttendRequest';
 function Main(){
 
     const [isBaseHeader, toggleHeader] = useHeaderContext();
-    // const isBaseHeader = localStorage.getItem("isBaseHeader");
-    
     const history = useHistory();
     const [user, setUser] = useUserContext();
-
-    // useEffect(() => {
-  
-    //   if(user){
-    //     setInterval(  
-    //       () => {
-    //           console.log(user.tokenExpiry)
-    //         let expiry = new Date(user.tokenExpiry);
-    //         let current = new Date();
-    //         current.setSeconds(current.getSeconds())
-    //         console.log(expiry , " : " , current);  
-    //         if(current > expiry){
-    //             console.log("Refresh Token");
-    //         }
-    //         else{
-    //             console.log("Same")
-    //         }
-    //       },  
-    //       1000  
-    //     );  
-    //   }
-    // }, []) 
 
     useEffect(()=>{
         const paths = ["/home", "/services", "/aboutUs", "/contactUs", "/register"]
         if(!user &&  !paths.includes(window.location.pathname)){
             toggleHeader(true);
             history.push('/');
+        }else if(user && user.userType == "Admin" && paths.includes(window.location.pathname) ){
+            toggleHeader(false);
+            history.push("/dashboard");
+        }
+        else if(user && user.userType == "User" && paths.includes(window.location.pathname)){
+            toggleHeader(false);
+            history.push("/user-dashboard");
+        }else if(user){
+            toggleHeader(false);
+        }else{
+            toggleHeader(true);
         }
     },[]);
 
