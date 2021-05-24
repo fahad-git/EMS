@@ -16,6 +16,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { CheckUsernameAvailability, RegisterUser } from './API/Auth';
 
+var mailformat = /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i;
+
 function Register(){
 
     const history =  useHistory();
@@ -105,27 +107,29 @@ function Register(){
                             <Form.Group as={Row} controlId="formBasicFirstName">
                                 {/* <Form.Label>Email address</Form.Label> */}
                                 <Col sm={{span:6, offset:3}}>
-                                    <Form.Control name="firstName" type="text" placeholder="First Name" ref={register({required: true, minLength:3  })} />
+                                    <Form.Control name="firstName" type="text" placeholder="First Name" ref={register({required: true, minLength:3, validate: (value) => { return !!value.trim()}  })} />
                                         {errors.firstName?.type === "required" && <div className="error">{"This field is mandatory."} </div> }
                                         {errors.firstName?.type === "minLength" && <div className="error">{"Your input is less than minimum length"} </div> }                             
+                                        {errors.firstName?.type === "validate" && <div className="error">{"Only spaces are not acceptable"} </div> }                             
                                 </Col>
                             </Form.Group>
 
                             <Form.Group as={Row} controlId="formBasicLastName">
                                 <Col sm={{span:6, offset:3}}>
                                 {/* <Form.Label block>Password</Form.Label> */}
-                                    <Form.Control name="lastName" type="text" placeholder="Last Name" ref={register({required: true, minLength:3  })} />
+                                    <Form.Control name="lastName" type="text" placeholder="Last Name" ref={register({required: true, minLength:3,validate: (value) => { return !!value.trim()}  })} />
                                         {errors.lastName?.type === "required" && <div className="error">{"This field is mandatory."} </div> }
                                         {errors.lastName?.type === "minLength" && <div className="error">{"Your input is less than minimum length"} </div> }                             
+                                        {errors.lastName?.type === "validate" && <div className="error">{"Only spaces are not acceptable"} </div> }                             
                                 </Col>
                             </Form.Group>
 
                             <Form.Group as={Row} controlId="formBasicEmail">
                                 {/* <Form.Label>Password</Form.Label> */}
                                 <Col sm={{span:6, offset:3}}>
-                                    <Form.Control name="email" type="email" placeholder="Email" ref={register({required: true, minLength:7  })} />
+                                    <Form.Control name="email" type="email" placeholder="Email" ref={register({required: true, validate: (value) => { return value.match(mailformat) ? true: false} }) } />
                                         {errors.email?.type === "required" && <div className="error">{"This field is mandatory."} </div> }
-                                        {errors.email?.type === "minLength" && <div className="error">{"Your input is less than minimum length"} </div> }                             
+                                        {errors.email?.type === "validate" && <div className="error">{"Invalid email format"} </div> }                             
                                 </Col>
                             </Form.Group>
 
@@ -166,9 +170,10 @@ function Register(){
                             <Form.Group as={Row} controlId="formBasicAddress1">
                                 {/* <Form.Label>Address</Form.Label> */}
                                 <Col sm={{span:6, offset:3}}>
-                                    <Form.Control name="address" type="text" placeholder="Address" ref={register({required: true, minLength:7  })}  />
+                                    <Form.Control name="address" type="text" placeholder="Address" ref={register({required: true, minLength:7,validate: (value) => { return !!value.trim()}  })}  />
                                         {errors.address?.type === "required" && <div className="error">{"This field is mandatory."} </div> }
                                         {errors.address?.type === "minLength" && <div className="error">{"Your input is less than minimum length"} </div> }                             
+                                        {errors.address?.type === "validate" && <div className="error">{"Only spaces are not acceptable"} </div> }                             
                                 </Col>
                             </Form.Group>
                                     
@@ -207,9 +212,10 @@ function Register(){
                             <Form.Group as={Row} controlId="formBasicPassword">
                                 {/* <Form.Label>Address</Form.Label> */}
                                 <Col sm={{span:6, offset:3}}>
-                                    <Form.Control name="password" type="password" placeholder="Password" ref={register({required: true, minLength:8  })} />
+                                    <Form.Control name="password" type="password" placeholder="Password" ref={register({required: true, minLength:8,validate: (value) => { return !!value.trim()}  })} />
                                         {errors.password?.type === "required" && <div className="error">{"You must specify a password"} </div> }
                                         {errors.password?.type === "minLength" && <div className="error">{"Password must have at least 8 characters"} </div> }                             
+                                        {errors.password?.type === "validate" && <div className="error">{"Only spaces are not acceptable"} </div> }                             
                                 </Col>
                             </Form.Group>
 
