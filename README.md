@@ -12,6 +12,11 @@ The Event Management System (EMS) Frontend is a web-based interface designed to 
 
 ---
 
+![ezgif com-animated-gif-maker](https://github.com/user-attachments/assets/145e7e77-432e-413a-81e8-743bdf81a480)
+
+
+---
+
 ## Tech Stack
 
 - **Framework:** React.js (bootstrapped with Create React App)
